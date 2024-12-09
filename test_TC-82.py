@@ -6,6 +6,7 @@ from selenium.common import NoSuchElementException
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
+from appium.webdriver.common.mobileby import MobileBy
 
 from time import sleep, time
 from appium.options.android import UiAutomator2Options
@@ -85,22 +86,23 @@ def test_login(driver):
     sleep(1)
 
     # Выполняем свайп экрана вверх до указанного элемента
+    # Выполняем свайп экрана вверх до указанного элемента
     while True:
         try:
-            # Проверяем наличие элемента
-            target_element = driver.find_element(By.XPATH,'/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.view.ViewGroup/android.widget.FrameLayout[1]/android.view.ViewGroup/android.widget.ScrollView/android.widget.LinearLayout/androidx.recyclerview.widget.RecyclerView/android.view.ViewGroup[3]/android.widget.TextView[4]')
+            # Поиск элемента по тексту
+            target_element = driver.find_element(MobileBy.ANDROID_UIAUTOMATOR, 'new UiSelector().text("Lesson 4")')
             print("Элемент найден!")
             break  # Если элемент найден, выходим из цикла
         except:
-            # Если элемент не найден, выполняем свайп вверх
+            # Выполняем свайп вверх
             size = driver.get_window_size()
             start_x = size['width'] / 2
-            start_y = size['height'] * 0.7  # Начальная точка свайпа (80% от высоты экрана)
-            end_y = size['height'] * 0.5  # Конечная точка свайпа (20% от высоты экрана)
+            start_y = size['height'] * 0.8
+            end_y = size['height'] * 0.4
 
             driver.swipe(start_x, start_y, start_x, end_y, 800)
             print("Свайп вверх выполнен.")
-            sleep(1)  # Небольшая задержка перед следующим свайпом
+            sleep(1)
 
     # Проходим 4 урок
     lesson4 = driver.find_element(By.XPATH, '/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.view.ViewGroup/android.widget.FrameLayout[1]/android.view.ViewGroup/android.widget.ScrollView/android.widget.LinearLayout/androidx.recyclerview.widget.RecyclerView/android.view.ViewGroup[3]/android.widget.TextView[4]')
