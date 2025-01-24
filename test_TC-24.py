@@ -1,33 +1,13 @@
 import pytest
-import allure
 from appium import webdriver
-from appium.webdriver.common.appiumby import AppiumBy
-from selenium.common import NoSuchElementException
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
-
 from time import sleep, time
-from appium.options.android import UiAutomator2Options
 
+#=============================================#
 
-# Для автотестов использовать только телефон Motorola.
-capabilities = dict(
-    platformName='Android',
-    automationName='uiautomator2',
-    deviceName='ZY32FX9296', # Phone Motorola
-    platformVersion='11',
-    appPackage='com.tradingcourses.learnhowtoinvest',
-    appActivity='com.trade.test.ui.splash.SplashActivity',
-    language='en',
-    locale='US'
-)
+from config import capabilities_options, appium_server_url  # Импортируем настройки
 
-capabilities_options = UiAutomator2Options().load_capabilities(capabilities)
-appium_server_url = 'http://localhost:4723'
-
-
-@pytest.fixture()
+@pytest.fixture(scope="function")
 def driver():
     android_driver = webdriver.Remote(appium_server_url, options=capabilities_options)
     yield android_driver
@@ -38,6 +18,8 @@ def driver():
 def rotate_screen(driver, orientation):
     # orientation: 'LANDSCAPE' or 'PORTRAIT'
     driver.orientation = orientation
+
+#=============================================#
 
 def test_swap_currency_pairs(driver):
     sleep(7)
@@ -56,7 +38,7 @@ def test_swap_currency_pairs(driver):
     email = driver.find_element(By.XPATH, '//android.widget.EditText[@text="Your email"]')
     email.send_keys('qakrasnokutskiy@gmail.com')
     sleep(1)
-    print('Поле успешно заполнено')
+
 
     # Заполняем поле password
     password = driver.find_element(By.XPATH, '//android.widget.EditText[@text="Your password"]')

@@ -1,59 +1,45 @@
 import pytest
-import allure
 from appium import webdriver
-from appium.webdriver.common.appiumby import AppiumBy
-from selenium.common import NoSuchElementException
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from appium.webdriver.common.mobileby import MobileBy
-
 from time import sleep, time
-from appium.options.android import UiAutomator2Options
 
-# Для автотестов использовать только телефон Motorola.
-capabilities = dict(
-    platformName='Android',
-    automationName='uiautomator2',
-    deviceName='ZY32FX9296',  # Phone Motorola
-    platformVersion='11',
-    appPackage='com.tradingcourses.learnhowtoinvest',
-    appActivity='com.trade.test.ui.splash.SplashActivity',
-    language='en',
-    locale='US'
-)
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
-capabilities_options = UiAutomator2Options().load_capabilities(capabilities)
-appium_server_url = 'http://localhost:4723'
+#=============================================#
 
+from config import capabilities_options, appium_server_url  # Импортируем настройки
 
-@pytest.fixture()
+@pytest.fixture(scope="function")
 def driver():
     android_driver = webdriver.Remote(appium_server_url, options=capabilities_options)
     yield android_driver
     if android_driver:
+        android_driver.terminate_app("com.tradingcourses.learnhowtoinvest")
+        android_driver.activate_app("com.tradingcourses.learnhowtoinvest")
         android_driver.quit()
 
+def wait_and_click(driver, by, value, timeout=10):
+    """Ожидание элемента и клик."""
+    element = WebDriverWait(driver, timeout).until(EC.element_to_be_clickable((by, value)))
+    element.click()
 
 def rotate_screen(driver, orientation):
     # orientation: 'LANDSCAPE' or 'PORTRAIT'
     driver.orientation = orientation
+
+#=============================================#
 
 
 def test_login(driver):
     sleep(7)
 
     # Выбираем англ язык
-    english = driver.find_element(By.XPATH,
-                                  '//android.widget.TextView[@resource-id="com.tradingcourses.learnhowtoinvest:id/tv_name" and @text="English"]')
-    english.click()
-    sleep(1)
+    wait_and_click(driver, MobileBy.ANDROID_UIAUTOMATOR, 'new UiSelector().text("English")')
 
     # Нажимает кнопку "Войти/Зарегистрироваться
-    login = driver.find_element(By.XPATH,
-                                '//android.widget.TextView[@resource-id="com.tradingcourses.learnhowtoinvest:id/tv_enter"]')
-    login.click()
-    sleep(1)
+    wait_and_click(driver, MobileBy.ANDROID_UIAUTOMATOR,'new UiSelector().resourceId("com.tradingcourses.learnhowtoinvest:id/tv_enter")')
 
     # Заполняем поле email
     email = driver.find_element(By.XPATH, '//android.widget.EditText[@text="Your email"]')
@@ -68,34 +54,22 @@ def test_login(driver):
     print('Поле успешно заполнено')
 
     # Выполняем вход
-    signin = driver.find_element(By.XPATH,
-                                 '//android.widget.Button[@resource-id="com.tradingcourses.learnhowtoinvest:id/bt_signIn"]')
-    signin.click()
-    sleep(3)
+    wait_and_click(driver, MobileBy.ANDROID_UIAUTOMATOR,'new UiSelector().resourceId("com.tradingcourses.learnhowtoinvest:id/bt_signIn")')
 
     # Переходим на экран треининг
-    training = driver.find_element(By.XPATH,
-                                   '//android.widget.FrameLayout[@content-desc="Training"]/android.widget.FrameLayout/android.widget.ImageView')
-    training.click()
-    sleep(1)
+    wait_and_click(driver, MobileBy.ANDROID_UIAUTOMATOR,'new UiSelector().resourceId("com.tradingcourses.learnhowtoinvest:id/navigation_bar_item_large_label_view")')
 
     # Меняем курс
-    change_course = driver.find_element(By.XPATH,
-                                        '/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.view.ViewGroup/android.widget.FrameLayout[1]/android.view.ViewGroup/android.view.ViewGroup/android.widget.Button')
-    change_course.click()
-    sleep(1)
+    wait_and_click(driver, MobileBy.ANDROID_UIAUTOMATOR,'new UiSelector().resourceId("com.tradingcourses.learnhowtoinvest:id/bt_change_course")')
 
     # PRO course
-    pro = driver.find_element(By.XPATH,
-                              '/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.view.ViewGroup/android.widget.FrameLayout/android.view.ViewGroup/android.widget.ScrollView/android.view.ViewGroup/android.view.ViewGroup[3]')
-    pro.click()
-    sleep(1)
+    wait_and_click(driver, MobileBy.ANDROID_UIAUTOMATOR,'new UiSelector().resourceId("com.tradingcourses.learnhowtoinvest:id/tv_course_desc2")')
 
     # Выполняем свайп экрана вверх до указанного элемента
     while True:
         try:
             # Поиск элемента по тексту
-            target_element = driver.find_element(MobileBy.ANDROID_UIAUTOMATOR, 'new UiSelector().text("Lesson 9")')
+            target_element = driver.find_element(MobileBy.ANDROID_UIAUTOMATOR, 'new UiSelector().text("The Double Red Binary Options Trading Strategy").instance(0)')
             print("Элемент найден!")
             break  # Если элемент найден, выходим из цикла
         except:
@@ -110,53 +84,57 @@ def test_login(driver):
             sleep(1)
 
     # Проходим 9 урок
-    lesson9 = driver.find_element(By.XPATH,'//android.widget.TextView[@resource-id="com.tradingcourses.learnhowtoinvest:id/tv_title" and @text="Lesson 9"]')
-    lesson9.click()
-    sleep(5)
+    wait_and_click(driver, MobileBy.ANDROID_UIAUTOMATOR,'new UiSelector().text("The Double Red Binary Options Trading Strategy").instance(0)')
 
-    complete_task = driver.find_element(By.XPATH,'/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.view.ViewGroup/android.widget.FrameLayout/android.view.ViewGroup/android.widget.Button')
-    complete_task.click()
-    sleep(3)
+    # COMPLETE
+    wait_and_click(driver, MobileBy.ANDROID_UIAUTOMATOR,'new UiSelector().resourceId("com.tradingcourses.learnhowtoinvest:id/bt_complete")')
 
-    question1 = driver.find_element(By.XPATH,'(//android.widget.ImageView[@resource-id="com.tradingcourses.learnhowtoinvest:id/iv_check"])[2]')
-    question1.click()
-    sleep(3)
+    # ----------------------------------------------------------------------------------------------------------
+    #   ____         _            ____ ____ _____ ______ ____ ____   _  __
+    #  / __ \ __ __ (_)___       / __// __// ___//_  __//  _// __ \ / |/ /
+    # / /_/ // // // //_ /      _\ \ / _/ / /__   / /  _/ / / /_/ //    /
+    # \___\_\\_,_//_/ /__/     /___//___/ \___/  /_/  /___/ \____//_/|_/
 
-    question2 = driver.find_element(By.XPATH,'(//android.widget.ImageView[@resource-id="com.tradingcourses.learnhowtoinvest:id/iv_check"])[3]')
-    question2.click()
-    sleep(3)
+    wait_and_click(driver, MobileBy.ANDROID_UIAUTOMATOR, 'new UiSelector().text("Uptrend")')
+    wait_and_click(driver, MobileBy.ANDROID_UIAUTOMATOR,'new UiSelector().text("Difference between closing and high price")')
+    wait_and_click(driver, MobileBy.ANDROID_UIAUTOMATOR,'new UiSelector().text("PUT option")')
+    wait_and_click(driver, MobileBy.ANDROID_UIAUTOMATOR,'new UiSelector().text("Short-term price reversals")')
+    wait_and_click(driver, MobileBy.ANDROID_UIAUTOMATOR, 'new UiSelector().text("Formation of two bearish candles after testing the resistance level")')
+    # ----------------------------------------------------------------------------------------------------------
 
-    question3 = driver.find_element(By.XPATH,'(//android.widget.ImageView[@resource-id="com.tradingcourses.learnhowtoinvest:id/iv_check"])[2]')
-    question3.click()
-    sleep(3)
+    # CLOSE QUIZ
+    wait_and_click(driver, MobileBy.ANDROID_UIAUTOMATOR,'new UiSelector().resourceId("com.tradingcourses.learnhowtoinvest:id/iv_cancel")')
 
-    question4 = driver.find_element(By.XPATH,'(//android.widget.ImageView[@resource-id="com.tradingcourses.learnhowtoinvest:id/iv_check"])[1]')
-    question4.click()
-    sleep(3)
+    # Выполняем свайп экрана вверх до указанного элемента
+    while True:
+        try:
+            # Поиск элемента по тексту
+            target_element = driver.find_element(MobileBy.ANDROID_UIAUTOMATOR, 'new UiSelector().text("Select the image that contains two consecutive red candles")')
+            print("Элемент найден!")
+            break  # Если элемент найден, выходим из цикла
+        except:
+            # Выполняем свайп вверх
+            size = driver.get_window_size()
+            start_x = size['width'] / 2
+            start_y = size['height'] * 0.8
+            end_y = size['height'] * 0.4
 
-    question5 = driver.find_element(By.XPATH,'(//android.widget.ImageView[@resource-id="com.tradingcourses.learnhowtoinvest:id/iv_check"])[2]')
-    question5.click()
-    sleep(3)
+            driver.swipe(start_x, start_y, start_x, end_y, 800)
+            print("Свайп вверх выполнен.")
+            sleep(1)
 
-    close_quiz = driver.find_element(By.XPATH,'//android.widget.ImageView[@resource-id="com.tradingcourses.learnhowtoinvest:id/iv_cancel"]')
-    close_quiz.click()
-    sleep(2)
 
-    open_practical = driver.find_element(By.XPATH,'(//android.widget.TextView[@resource-id="com.tradingcourses.learnhowtoinvest:id/tv_title"])[6]')
-    open_practical.click()
-    sleep(2)
+    # OPEN PRACTICAL
+    wait_and_click(driver, MobileBy.ANDROID_UIAUTOMATOR,'new UiSelector().text("Select the image that contains two consecutive red candles")')
 
-    down = driver.find_element(By.XPATH,'//android.widget.ImageView[@resource-id="com.tradingcourses.learnhowtoinvest:id/iv_img2"]')
-    down.click()
-    sleep(2)
+    # DOWN IMAGE
+    wait_and_click(driver, MobileBy.ANDROID_UIAUTOMATOR,'new UiSelector().resourceId("com.tradingcourses.learnhowtoinvest:id/iv_img2")')
 
-    clear = driver.find_element(By.XPATH,'//android.widget.Button[@resource-id="com.tradingcourses.learnhowtoinvest:id/bt_ok"]')
-    clear.click()
-    sleep(2)
+    # CLEAR
+    wait_and_click(driver, MobileBy.ANDROID_UIAUTOMATOR,'new UiSelector().resourceId("com.tradingcourses.learnhowtoinvest:id/bt_ok")')
 
-    continue_lesson = driver.find_element(By.XPATH,'//android.widget.Button[@resource-id="com.tradingcourses.learnhowtoinvest:id/bt_start"]')
-    continue_lesson.click()
-    sleep(2)
+    # COMPLETE LESSON
+    wait_and_click(driver, MobileBy.ANDROID_UIAUTOMATOR,'new UiSelector().resourceId("com.tradingcourses.learnhowtoinvest:id/bt_start")')
 
 
 

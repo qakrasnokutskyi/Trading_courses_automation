@@ -12,6 +12,8 @@ from faker import Faker
 import random
 import string
 
+#=============================================#
+
 # Создаем экземпляр Faker для генерации данных
 fake = Faker()
 
@@ -20,23 +22,13 @@ def generate_random_password(length=10):
     letters_and_digits = string.ascii_letters + string.digits
     return ''.join(random.choice(letters_and_digits) for i in range(length))
 
-# Для автотестов использовать только телефон Motorola.
-capabilities = dict(
-    platformName='Android',
-    automationName='uiautomator2',
-    deviceName='ZY32FX9296',  # Phone Motorola
-    platformVersion='11',
-    appPackage='com.tradingcourses.learnhowtoinvest',
-    appActivity='com.trade.test.ui.splash.SplashActivity',
-    language='en',
-    locale='US'
-)
+#=============================================#
 
-capabilities_options = UiAutomator2Options().load_capabilities(capabilities)
-appium_server_url = 'http://localhost:4723'
+#=============================================#
 
+from config import capabilities_options, appium_server_url  # Импортируем настройки
 
-@pytest.fixture()
+@pytest.fixture(scope="function")
 def driver():
     android_driver = webdriver.Remote(appium_server_url, options=capabilities_options)
     yield android_driver
@@ -48,6 +40,7 @@ def rotate_screen(driver, orientation):
     # orientation: 'LANDSCAPE' or 'PORTRAIT'
     driver.orientation = orientation
 
+#=============================================#
 
 def test_registration(driver):
     sleep(7)
