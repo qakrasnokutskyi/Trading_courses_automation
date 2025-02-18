@@ -29,9 +29,22 @@ def rotate_screen(driver, orientation):
     # orientation: 'LANDSCAPE' or 'PORTRAIT'
     driver.orientation = orientation
 
+def handle_quiz_popup(driver):
+    """Обработка плашки после прохождения квиза."""
+    try:
+        WebDriverWait(driver, 5).until(
+            EC.presence_of_element_located((MobileBy.ANDROID_UIAUTOMATOR, 'new UiSelector().resourceId("com.tradingcourses.learnhowtoinvest:id/cl_note")'))
+        )
+        print("Плашка найдена. Нажимаем кнопки.")
+        wait_and_click(driver, MobileBy.ANDROID_UIAUTOMATOR, 'new UiSelector().resourceId("com.tradingcourses.learnhowtoinvest:id/bt_neg")')
+        wait_and_click(driver, MobileBy.ANDROID_UIAUTOMATOR, 'new UiSelector().resourceId("com.tradingcourses.learnhowtoinvest:id/bt_neg")')
+    except:
+        print("Плашка не найдена. Продолжаем выполнение теста.")
+
 #=============================================#
 
 def test_login(driver):
+    handle_quiz_popup(driver)
     sleep(7)
 
     # Выбираем англ язык
@@ -61,8 +74,11 @@ def test_login(driver):
     # Меняем курс
     wait_and_click(driver, MobileBy.ANDROID_UIAUTOMATOR,'new UiSelector().resourceId("com.tradingcourses.learnhowtoinvest:id/bt_change_course")')
 
+
     # begginer course
     wait_and_click(driver, MobileBy.ANDROID_UIAUTOMATOR,'new UiSelector().resourceId("com.tradingcourses.learnhowtoinvest:id/tv_course_old_price")')
+
+    handle_quiz_popup(driver)
 
     # Выполняем свайп экрана вверх до указанного элемента
     while True:

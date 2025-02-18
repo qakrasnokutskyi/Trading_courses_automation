@@ -1,6 +1,6 @@
 import pytest
 from appium import webdriver
-from time import sleep, time
+from time import sleep
 from selenium.webdriver.common.by import By
 from appium.webdriver.common.mobileby import MobileBy
 
@@ -28,6 +28,18 @@ def wait_and_click(driver, by, value, timeout=10):
 def rotate_screen(driver, orientation):
     # orientation: 'LANDSCAPE' or 'PORTRAIT'
     driver.orientation = orientation
+
+def handle_quiz_popup(driver):
+    """Обработка плашки после прохождения квиза."""
+    try:
+        WebDriverWait(driver, 5).until(
+            EC.presence_of_element_located((MobileBy.ANDROID_UIAUTOMATOR, 'new UiSelector().resourceId("com.tradingcourses.learnhowtoinvest:id/cl_note")'))
+        )
+        print("Плашка найдена. Нажимаем кнопки.")
+        wait_and_click(driver, MobileBy.ANDROID_UIAUTOMATOR, 'new UiSelector().resourceId("com.tradingcourses.learnhowtoinvest:id/bt_neg")')
+        wait_and_click(driver, MobileBy.ANDROID_UIAUTOMATOR, 'new UiSelector().resourceId("com.tradingcourses.learnhowtoinvest:id/bt_neg")')
+    except:
+        print("Плашка не найдена. Продолжаем выполнение теста.")
 
 #=============================================#
 
@@ -101,5 +113,11 @@ def test_login(driver):
 
     # ----------------------------------------------------------------------------------------------------------
 
-    # close 'window'
-    wait_and_click(driver, MobileBy.ANDROID_UIAUTOMATOR,'new UiSelector().resourceId("com.tradingcourses.learnhowtoinvest:id/iv_cancel")')
+    # TAP NEXT
+    wait_and_click(driver, MobileBy.ANDROID_UIAUTOMATOR,'new UiSelector().resourceId("com.tradingcourses.learnhowtoinvest:id/tv_next")')
+    wait_and_click(driver, MobileBy.ANDROID_UIAUTOMATOR,'new UiSelector().resourceId("com.tradingcourses.learnhowtoinvest:id/bt_put")') # PUT
+    wait_and_click(driver, MobileBy.ANDROID_UIAUTOMATOR,'new UiSelector().resourceId("com.tradingcourses.learnhowtoinvest:id/bt_ok")') # OK
+    wait_and_click(driver, MobileBy.ANDROID_UIAUTOMATOR,'new UiSelector().resourceId("com.tradingcourses.learnhowtoinvest:id/bt_start")') #CONTINUE
+
+    handle_quiz_popup(driver)
+

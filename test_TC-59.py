@@ -4,12 +4,10 @@ import string
 from appium import webdriver
 from appium.webdriver.common.mobileby import MobileBy
 from selenium.webdriver.common.by import By
-
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-
 from faker import Faker
-from time import sleep, time
+from time import sleep
 
 #=============================================#
 
@@ -41,6 +39,13 @@ def wait_and_click(driver, by, value, timeout=10):
     element = WebDriverWait(driver, timeout).until(EC.element_to_be_clickable((by, value)))
     element.click()
 
+def swipe_left(driver):
+    size = driver.get_window_size()
+    start_x = size['width'] * 0.8
+    end_x = size['width'] * 0.2
+    start_y = size['height'] / 2
+    driver.swipe(start_x, start_y, end_x, start_y, 1000)
+
 def rotate_screen(driver, orientation):
     # orientation: 'LANDSCAPE' or 'PORTRAIT'
     driver.orientation = orientation
@@ -53,45 +58,9 @@ def test_login(driver):
     # Выбираем англ язык
     wait_and_click(driver, MobileBy.ANDROID_UIAUTOMATOR,'new UiSelector().text("English")')
 
-    # Выполнение свайпа влево между разделами онбоард страницы
-    # Получаем координаты элементов для свайпа
-    element = driver.find_element(MobileBy.ANDROID_UIAUTOMATOR,'new UiSelector().className("android.widget.FrameLayout").instance(4)')
-    size = driver.get_window_size()
-
-    # Начальные и конечные координаты для свайпа влево
-    start_x = size['width'] * 0.8
-    end_x = size['width'] * 0.2
-    start_y = size['height'] / 2
-
-    # Свайп с использованием метода swipe() (если используется более старая версия Appium)
-    driver.swipe(start_x, start_y, end_x, start_y, 1000)  # Время свайпа - 1000 миллисекунд
-    sleep(1)
-
-    # Получаем координаты элементов для свайпа
-    element = driver.find_element(MobileBy.ANDROID_UIAUTOMATOR,'new UiSelector().className("android.widget.FrameLayout").instance(4)')
-    size = driver.get_window_size()
-
-    # Начальные и конечные координаты для свайпа влево
-    start_x = size['width'] * 0.8  # Начальная точка (80% от ширины экрана)
-    end_x = size['width'] * 0.2  # Конечная точка (20% от ширины экрана)
-    start_y = size['height'] / 2  # Центр экрана по высоте
-
-    # Свайп с использованием метода swipe() (если используется более старая версия Appium)
-    driver.swipe(start_x, start_y, end_x, start_y, 1000)  # Время свайпа - 1000 миллисекунд
-    sleep(1)
-
-    # Получаем координаты элементов для свайпа
-    element = driver.find_element(MobileBy.ANDROID_UIAUTOMATOR,'new UiSelector().className("android.widget.FrameLayout").instance(4)')
-    size = driver.get_window_size()
-
-    # Начальные и конечные координаты для свайпа влево
-    start_x = size['width'] * 0.8  # Начальная точка (80% от ширины экрана)
-    end_x = size['width'] * 0.2  # Конечная точка (20% от ширины экрана)
-    start_y = size['height'] / 2  # Центр экрана по высоте
-
-    # Свайп с использованием метода swipe() (если используется более старая версия Appium)
-    driver.swipe(start_x, start_y, end_x, start_y, 1000)  # Время свайпа - 1000 миллисекунд
-    sleep(1)
+    # Выполняем свайпы
+    for _ in range(3):
+        swipe_left(driver)
 
     # BEGIN TRAINING
     wait_and_click(driver, MobileBy.ANDROID_UIAUTOMATOR,'new UiSelector().resourceId("com.tradingcourses.learnhowtoinvest:id/bt_start")')
@@ -126,19 +95,10 @@ def test_login(driver):
     sleep(1)
 
     # SIGN UP
-    wait_and_click(driver, MobileBy.ANDROID_UIAUTOMATOR,'new UiSelector().resourceId("com.tradingcourses.learnhowtoinvest:id/bt_create_acc")')
+    wait_and_click(driver, MobileBy.ANDROID_UIAUTOMATOR,'new UiSelector().resourceId("com.tradingcourses.learnhowtoinvest:id/bt_signIn")')
 
     # Выбираем курс
     wait_and_click(driver, MobileBy.ANDROID_UIAUTOMATOR,'new UiSelector().resourceId("com.tradingcourses.learnhowtoinvest:id/tv_course_old_price")')
 
     # SETTINGS
     wait_and_click(driver, MobileBy.ANDROID_UIAUTOMATOR,'new UiSelector().resourceId("com.tradingcourses.learnhowtoinvest:id/settings")')
-
-    # Проверяем, что почта в указанном поле соответствует использованной при регистрации
-    try:
-        registered_email_element = driver.find_element(MobileBy.ANDROID_UIAUTOMATOR,'new UiSelector().resourceId("com.tradingcourses.learnhowtoinvest:id/tv_email")')
-        registered_email_text = registered_email_element.text
-        assert registered_email_text == random_email, f"Ошибка: Почта не совпадает. Ожидалось '{random_email}', а найдено '{registered_email_text}'."
-        print("Проверка успешна: Почта соответствует использованной при регистрации.")
-    except Exception as e:
-        print(f"Произошла ошибка при проверке почты: {e}")

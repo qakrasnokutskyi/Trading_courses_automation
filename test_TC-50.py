@@ -41,16 +41,14 @@ def test_swap_currency_pairs(driver):
     wait_and_click(driver, MobileBy.ANDROID_UIAUTOMATOR,'new UiSelector().resourceId("com.tradingcourses.learnhowtoinvest:id/tv_enter")')
 
     # Заполняем поле email
-    email = driver.find_element(By.XPATH, '//android.widget.EditText[@text="Your email"]')
+    email = driver.find_element(MobileBy.ANDROID_UIAUTOMATOR,'new UiSelector().text("Your email")')
     email.send_keys('qakrasnokutskiy@gmail.com')
     sleep(1)
 
-
     # Заполняем поле password
-    password = driver.find_element(By.XPATH, '//android.widget.EditText[@text="Your password"]')
+    password = driver.find_element(MobileBy.ANDROID_UIAUTOMATOR,'new UiSelector().text("Your password")')
     password.send_keys('e251dq12r')
     sleep(1)
-
 
     # Выполняем вход
     wait_and_click(driver, MobileBy.ANDROID_UIAUTOMATOR,'new UiSelector().resourceId("com.tradingcourses.learnhowtoinvest:id/bt_signIn")')

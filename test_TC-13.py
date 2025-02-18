@@ -1,6 +1,11 @@
 import pytest
 from appium import webdriver
 from selenium.webdriver.common.by import By
+from appium.webdriver.common.mobileby import MobileBy
+
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+
 from time import sleep, time
 from faker import Faker
 import random
@@ -29,6 +34,10 @@ def driver():
     if android_driver:
         android_driver.quit()
 
+def wait_and_click(driver, by, value, timeout=10):
+    """Ожидание элемента и клик."""
+    element = WebDriverWait(driver, timeout).until(EC.element_to_be_clickable((by, value)))
+    element.click()
 
 def rotate_screen(driver, orientation):
     # orientation: 'LANDSCAPE' or 'PORTRAIT'
@@ -39,20 +48,14 @@ def rotate_screen(driver, orientation):
 def test_registration(driver):
     sleep(7)
 
-    # Выбираем англ язык
-    english = driver.find_element(By.XPATH, '//android.widget.TextView[@resource-id="com.tradingcourses.learnhowtoinvest:id/tv_name" and @text="English"]')
-    english.click()
-    sleep(1)
+    # English Language
+    wait_and_click(driver, MobileBy.ANDROID_UIAUTOMATOR, 'new UiSelector().text("English")')
 
     # Нажимает кнопку "Войти/Зарегистрироваться
-    login = driver.find_element(By.XPATH, '//android.widget.TextView[@resource-id="com.tradingcourses.learnhowtoinvest:id/tv_enter"]')
-    login.click()
-    sleep(1)
+    wait_and_click(driver, MobileBy.ANDROID_UIAUTOMATOR,'new UiSelector().resourceId("com.tradingcourses.learnhowtoinvest:id/tv_enter")')
 
     # Переходим в раздел "Регистрация"
-    registration = driver.find_element(By.XPATH, '//android.widget.TextView[@resource-id="com.tradingcourses.learnhowtoinvest:id/tv_tab_reg"]')
-    registration.click()
-    sleep(1)
+    wait_and_click(driver, MobileBy.ANDROID_UIAUTOMATOR,'new UiSelector().resourceId("com.tradingcourses.learnhowtoinvest:id/tv_tab_reg")')
 
     # Генерируем случайные значения для полей
     random_name = fake.first_name()
@@ -75,17 +78,11 @@ def test_registration(driver):
     sleep(1)
 
     # Заходим в новый аккаунт
-    signup = driver.find_element(By.XPATH, '//android.widget.Button[@resource-id="com.tradingcourses.learnhowtoinvest:id/bt_signIn"]')
-    signup.click()
-    sleep(5)
+    wait_and_click(driver, MobileBy.ANDROID_UIAUTOMATOR,'new UiSelector().resourceId("com.tradingcourses.learnhowtoinvest:id/bt_signIn")')
 
     # Выбираем курс
-    beginner = driver.find_element(By.XPATH,'//android.view.ViewGroup[@resource-id="com.tradingcourses.learnhowtoinvest:id/ll_beginner"]')
-    beginner.click()
-    sleep(1)
+    wait_and_click(driver, MobileBy.ANDROID_UIAUTOMATOR,'new UiSelector().resourceId("com.tradingcourses.learnhowtoinvest:id/tv_course_old_price")')
 
     # Переходим в настройки
-    settings = driver.find_element(By.XPATH, '//android.widget.FrameLayout[@content-desc="Settings"]')
-    settings.click()
-    sleep(5)
+    wait_and_click(driver, MobileBy.ANDROID_UIAUTOMATOR,'new UiSelector().text("Settings")')
 

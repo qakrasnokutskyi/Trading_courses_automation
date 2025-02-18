@@ -1,8 +1,11 @@
 import pytest
 from appium import webdriver
+from appium.webdriver.common.mobileby import MobileBy
 from selenium.webdriver.common.by import By
-from time import sleep, time
+from time import sleep
 
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 #=============================================#
 
 from config import capabilities_options, appium_server_url  # Импортируем настройки
@@ -11,56 +14,34 @@ from config import capabilities_options, appium_server_url  # Импортиру
 def driver():
     android_driver = webdriver.Remote(appium_server_url, options=capabilities_options)
     yield android_driver
-    if android_driver:
-        android_driver.quit()
+    android_driver.quit()
 
-
-def rotate_screen(driver, orientation):
-    # orientation: 'LANDSCAPE' or 'PORTRAIT'
-    driver.orientation = orientation
+def wait_and_click(driver, by, value, timeout=10):
+    """Ожидание элемента и клик."""
+    element = WebDriverWait(driver, timeout).until(EC.element_to_be_clickable((by, value)))
+    element.click()
 
 #=============================================#
 
 def test_login(driver):
     sleep(7)
 
-    # Выбираем англ язык
-    english = driver.find_element(By.XPATH,'//android.widget.TextView[@resource-id="com.tradingcourses.learnhowtoinvest:id/tv_name" and @text="English"]')
-    english.click()
-    sleep(1)
+    # English Language
+    wait_and_click(driver, MobileBy.ANDROID_UIAUTOMATOR, 'new UiSelector().text("English")')
 
     # Нажимает кнопку "Войти/Зарегистрироваться
-    login = driver.find_element(By.XPATH, '//android.widget.TextView[@resource-id="com.tradingcourses.learnhowtoinvest:id/tv_enter"]')
-    login.click()
-    sleep(1)
+    wait_and_click(driver, MobileBy.ANDROID_UIAUTOMATOR,'new UiSelector().resourceId("com.tradingcourses.learnhowtoinvest:id/tv_enter")')
 
     # Заполняем поле email
     email = driver.find_element(By.XPATH, '//android.widget.EditText[@text="Your email"]')
     email.send_keys('')
     sleep(1)
 
-
     # Заполняем поле password
     password = driver.find_element(By.XPATH, '//android.widget.EditText[@text="Your password"]')
     password.send_keys('')
     sleep(1)
 
-
     # Выполняем вход
-    signin = driver.find_element(By.XPATH, '//android.widget.Button[@resource-id="com.tradingcourses.learnhowtoinvest:id/bt_signIn"]')
-    signin.click()
-    sleep(5)
+    wait_and_click(driver, MobileBy.ANDROID_UIAUTOMATOR,'new UiSelector().resourceId("com.tradingcourses.learnhowtoinvest:id/bt_signIn")')
 
-
-# Проверяем, если ошибка регистрации, то считаем её правильной
-try:
-    # Пытаемся найти элемент с ошибкой (например, сообщение об ошибке валидации)
-    error_message = driver.find_element(By.XPATH, '//android.widget.TextView[@resource-id="com.tradingcourses.learnhowtoinvest:id/error_message"]')
-
-    # Если элемент найден, то ошибка регистрации есть, считаем правильным результат
-    assert error_message.is_displayed()  # Проверяем, что сообщение об ошибке отображается
-
-
-except Exception as e:
-    # Если элемента с ошибкой нет, значит, ошибка не произошла
-    print("Регистрация прошла успешно, что является неправильным результатом.")

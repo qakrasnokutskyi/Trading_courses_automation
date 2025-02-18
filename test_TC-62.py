@@ -16,7 +16,7 @@ def driver():
     android_driver = webdriver.Remote(appium_server_url, options=capabilities_options)
     yield android_driver
     if android_driver:
-        android_driver.terminate_app("com.tradingcourses.learnhowtoinvest")
+        android_driver.terminate_app("com.tradingcourses.learnhowtoinvest", timeout=5000)
         android_driver.activate_app("com.tradingcourses.learnhowtoinvest")
         android_driver.quit()
 
