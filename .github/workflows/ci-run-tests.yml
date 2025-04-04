@@ -2,6 +2,11 @@ name: Run Appium Tests via SSH (Local Device)
 
 on:
   workflow_dispatch:
+    inputs:
+      folder:
+        description: 'Test folder to run (e.g. tests/auth)'
+        required: true
+        default: 'tests/auth'
 
 jobs:
   run-tests-locally:
@@ -21,4 +26,4 @@ jobs:
           script: |
             cd ~/PycharmProjects/Trading_courses_automation
             source .venv/bin/activate
-            pytest tests/ --maxfail=5 --disable-warnings --tb=short -v
+            pytest ${{ github.event.inputs.folder }} --maxfail=5 --disable-warnings
