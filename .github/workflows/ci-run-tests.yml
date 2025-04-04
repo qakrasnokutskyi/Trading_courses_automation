@@ -1,0 +1,24 @@
+name: Run Appium Tests via SSH (Local Device)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  run-tests-locally:
+    name: Run tests on local Mac with phone
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Connect to local Mac and run tests
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            cd ~/PycharmProjects/Trading_courses_automation
+            source .venv/bin/activate
+            pytest tests/ --maxfail=5 --disable-warnings --tb=short -v
