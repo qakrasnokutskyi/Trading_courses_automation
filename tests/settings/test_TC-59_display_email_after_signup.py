@@ -52,7 +52,7 @@ def rotate_screen(driver, orientation):
 
 #=============================================#
 
-def test_login(driver):
+def test_display_email_after_signup(driver):
     sleep(7)
 
     # Выбираем англ язык

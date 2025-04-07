@@ -43,7 +43,7 @@ def handle_quiz_popup(driver):
 
 #=============================================#
 
-def test_login(driver):
+def test_complete_lesson_2(driver):
     sleep(7)
 
     # Выбираем англ язык

@@ -2,13 +2,12 @@ import pytest
 from appium import webdriver
 from appium.webdriver.common.appiumby import AppiumBy
 from selenium.webdriver.common.by import By
-from time import sleep
-
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-#=============================================#
 
-from config import capabilities_options, appium_server_url  # Импортируем настройки
+from config import capabilities_options, appium_server_url
+
+# ==================== fixture ====================
 
 @pytest.fixture(scope="function")
 def driver():
@@ -16,34 +15,44 @@ def driver():
     yield android_driver
     android_driver.quit()
 
+# ==================== Utilits ====================
+
 def wait_and_click(driver, by, value, timeout=10):
-    """Ожидание элемента и клик."""
     element = WebDriverWait(driver, timeout).until(EC.element_to_be_clickable((by, value)))
     element.click()
 
-#=============================================#
+def wait_for_element(driver, by, value, timeout=10):
+    return WebDriverWait(driver, timeout).until(EC.presence_of_element_located((by, value)))
 
-def test_login(driver):
-    sleep(7)
+# ==================== Selectors ====================
 
-    # English Language
-    wait_and_click(driver, AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().text("English")')
+LANGUAGE_ENGLISH = 'new UiSelector().text("English")'
+BTN_SIGN_IN = 'new UiSelector().resourceId("com.tradingcourses.learnhowtoinvest:id/tv_enter")'
+FIELD_EMAIL_XPATH = '//android.widget.EditText[@text="Your email"]'
+FIELD_PASSWORD_XPATH = '//android.widget.EditText[@text="Your password"]'
+BTN_SUBMIT = 'new UiSelector().resourceId("com.tradingcourses.learnhowtoinvest:id/bt_signIn")'
+BTN_SETTINGS = 'new UiSelector().text("Settings")'
 
-    # Нажимает кнопку "Войти/Зарегистрироваться
-    wait_and_click(driver,AppiumBy.ANDROID_UIAUTOMATOR,'new UiSelector().resourceId("com.tradingcourses.learnhowtoinvest:id/tv_enter")')
+# ==================== Test ====================
 
-    # Заполняем поле email
-    email = driver.find_element(By.XPATH, '//android.widget.EditText[@text="Your email"]')
-    email.send_keys('qakrasnokutskiy@gmail.com')
-    sleep(1)
+def test_login_valid(driver):
+    # Выбираем английский
+    wait_and_click(driver, AppiumBy.ANDROID_UIAUTOMATOR, LANGUAGE_ENGLISH)
 
-    # Заполняем поле password
-    password = driver.find_element(By.XPATH, '//android.widget.EditText[@text="Your password"]')
-    password.send_keys('e251dq12r')
-    sleep(1)
+    # Переход на экран логина
+    wait_and_click(driver, AppiumBy.ANDROID_UIAUTOMATOR, BTN_SIGN_IN)
 
-    # Выполняем вход
-    wait_and_click(driver, AppiumBy.ANDROID_UIAUTOMATOR,'new UiSelector().resourceId("com.tradingcourses.learnhowtoinvest:id/bt_signIn")')
+    # Ввод email
+    email_field = wait_for_element(driver, AppiumBy.XPATH, FIELD_EMAIL_XPATH)
+    email_field.send_keys('qakrasnokutskiy@gmail.com')
 
-    # Переходим в настройки
-    wait_and_click(driver, AppiumBy.ANDROID_UIAUTOMATOR,'new UiSelector().text("Settings")')
+    # Ввод пароля
+    password_field = wait_for_element(driver, AppiumBy.XPATH, FIELD_PASSWORD_XPATH)
+    password_field.send_keys('e251dq12r')
+
+    # Нажимаем «войти»
+    wait_and_click(driver, AppiumBy.ANDROID_UIAUTOMATOR, BTN_SUBMIT)
+
+    # Проверка: попали на экран с кнопкой "Settings"
+    settings_btn = wait_for_element(driver, AppiumBy.ANDROID_UIAUTOMATOR, BTN_SETTINGS)
+    assert settings_btn is not None, "❌ Кнопка 'Settings' не найдена — вход, не удался"

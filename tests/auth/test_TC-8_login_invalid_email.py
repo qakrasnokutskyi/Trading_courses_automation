@@ -23,7 +23,7 @@ def wait_and_click(driver, by, value, timeout=10):
 
 #=============================================#
 
-def test_login(driver):
+def test_login_invalid_email(driver):
     sleep(7)
 
     # English Language

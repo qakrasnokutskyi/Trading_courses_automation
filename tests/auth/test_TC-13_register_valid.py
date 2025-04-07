@@ -45,7 +45,7 @@ def rotate_screen(driver, orientation):
 
 #=============================================#
 
-def test_registration(driver):
+def test_register_valid(driver):
     sleep(7)
 
     # English Language

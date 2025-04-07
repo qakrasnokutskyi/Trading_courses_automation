@@ -21,7 +21,7 @@ def rotate_screen(driver, orientation):
 
 #=============================================#
 
-def test_change_language(driver):
+def test_choose_advanced_after_onboard(driver):
     sleep(7)
 
     # Выбираем англ язык

@@ -51,7 +51,7 @@ def swipe_left(driver):
 #=============================================#
 
 
-def test_login(driver):
+def test_create_account_button(driver):
     sleep(7)
 
     # Выбираем англ язык

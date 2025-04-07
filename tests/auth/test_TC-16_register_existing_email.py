@@ -40,7 +40,7 @@ def wait_and_click(driver, by, value, timeout=10):
 
 #=============================================#
 
-def test_registration(driver):
+def test_register_existing_email(driver):
     sleep(7)
 
     # English Language

@@ -31,7 +31,7 @@ def wait_and_click(driver, by, value, timeout=10):
 
 #=============================================#
 
-def test_change_language(driver):
+def test_show_choose_course_screen(driver):
     sleep(7)
 
     # English Language

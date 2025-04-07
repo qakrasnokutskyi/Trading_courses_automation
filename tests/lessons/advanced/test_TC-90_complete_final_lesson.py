@@ -43,7 +43,7 @@ def handle_quiz_popup(driver):
 
 #=============================================#
 
-def test_login(driver):
+def test_complete_final_lesson(driver):
     handle_quiz_popup(driver)
     sleep(7)
 

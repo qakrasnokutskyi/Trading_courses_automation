@@ -30,7 +30,7 @@ def rotate_screen(driver, orientation):
 
 #=============================================#
 
-def test_swap_currency_pairs(driver):
+def test_switch_chart_type(driver):
     sleep(7)
 
     # Выбираем англ язык

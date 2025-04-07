@@ -31,7 +31,7 @@ def rotate_screen(driver, orientation):
 
 #=============================================#
 
-def test_graphic(driver):
+def test_edit_chart(driver):
     sleep(7)
 
     # Выбираем англ язык
