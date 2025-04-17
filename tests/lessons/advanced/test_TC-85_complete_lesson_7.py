@@ -1,13 +1,18 @@
+# -------------------------------------------------------------------------------
+# --- Imports ---
+# -------------------------------------------------------------------------------
+
 import pytest
 from appium import webdriver
 from selenium.webdriver.common.by import By
 from appium.webdriver.common.appiumby import AppiumBy
-from time import sleep, time
-
+from time import sleep
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-#=============================================#
+# -------------------------------------------------------------------------------
+# --- Fixture ---
+# -------------------------------------------------------------------------------
 
 from config import capabilities_options, appium_server_url  # Импортируем настройки
 
@@ -19,6 +24,10 @@ def driver():
         android_driver.terminate_app("com.tradingcourses.learnhowtoinvest")
         android_driver.activate_app("com.tradingcourses.learnhowtoinvest")
         android_driver.quit()
+
+# -------------------------------------------------------------------------------
+# --- Utils ---
+# -------------------------------------------------------------------------------
 
 def wait_and_click(driver, by, value, timeout=10):
     """Ожидание элемента и клик."""
@@ -41,7 +50,9 @@ def handle_quiz_popup(driver):
     except:
         print("Плашка не найдена. Продолжаем выполнение теста.")
 
-#=============================================#
+# -------------------------------------------------------------------------------
+# --- Test ---
+# -------------------------------------------------------------------------------
 
 def test_complete_lesson_7(driver):
     handle_quiz_popup(driver)
@@ -114,6 +125,7 @@ def test_complete_lesson_7(driver):
     wait_and_click(driver, AppiumBy.ANDROID_UIAUTOMATOR,'new UiSelector().text("It is the price of the asset at which the trader neither makes a profit nor incurs losses")')
     wait_and_click(driver, AppiumBy.ANDROID_UIAUTOMATOR,'new UiSelector().text("It is an estimate of future volatility used to price options")')
     wait_and_click(driver, AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().text("Strike + premiums for CALL and PUT options")')
+
     # ----------------------------------------------------------------------------------------------------------
 
     # COMPLETE LESSON
@@ -121,5 +133,7 @@ def test_complete_lesson_7(driver):
 
     handle_quiz_popup(driver)
 
-
+# -------------------------------------------------------------------------------
+# --- Asserts ---
+# -------------------------------------------------------------------------------
 

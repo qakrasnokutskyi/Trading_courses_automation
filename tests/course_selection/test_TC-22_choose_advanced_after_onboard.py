@@ -1,9 +1,15 @@
+# -------------------------------------------------------------------------------
+# --- Imports ---
+# -------------------------------------------------------------------------------
+
 import pytest
 from appium import webdriver
 from selenium.webdriver.common.by import By
-from time import sleep, time
+from time import sleep
 
-#=============================================#
+# -------------------------------------------------------------------------------
+# --- Fixture ---
+# -------------------------------------------------------------------------------
 
 from config import capabilities_options, appium_server_url  # Импортируем настройки
 
@@ -14,12 +20,17 @@ def driver():
     if android_driver:
         android_driver.quit()
 
+# -------------------------------------------------------------------------------
+# --- Utils ---
+# -------------------------------------------------------------------------------
 
 def rotate_screen(driver, orientation):
     # orientation: 'LANDSCAPE' or 'PORTRAIT'
     driver.orientation = orientation
 
-#=============================================#
+# -------------------------------------------------------------------------------
+# --- Test ---
+# -------------------------------------------------------------------------------
 
 def test_choose_advanced_after_onboard(driver):
     sleep(7)
@@ -118,3 +129,7 @@ def test_choose_advanced_after_onboard(driver):
     advanced = driver.find_element(By.XPATH, '/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.view.ViewGroup/android.widget.FrameLayout/android.view.ViewGroup/android.widget.ScrollView/android.view.ViewGroup/android.view.ViewGroup[3]')
     advanced.click()
     sleep(5)
+
+# -------------------------------------------------------------------------------
+# --- Asserts ---
+# -------------------------------------------------------------------------------

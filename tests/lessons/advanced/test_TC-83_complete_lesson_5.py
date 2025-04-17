@@ -1,13 +1,18 @@
+# -------------------------------------------------------------------------------
+# --- Imports ---
+# -------------------------------------------------------------------------------
+
 import pytest
 from appium import webdriver
 from selenium.webdriver.common.by import By
 from appium.webdriver.common.appiumby import AppiumBy
-from time import sleep, time
-
+from time import sleep
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-#=============================================#
+# -------------------------------------------------------------------------------
+# --- Fixture ---
+# -------------------------------------------------------------------------------
 
 from config import capabilities_options, appium_server_url  # Импортируем настройки
 
@@ -19,6 +24,10 @@ def driver():
         android_driver.terminate_app("com.tradingcourses.learnhowtoinvest")
         android_driver.activate_app("com.tradingcourses.learnhowtoinvest")
         android_driver.quit()
+
+# -------------------------------------------------------------------------------
+# --- Utils ---
+# -------------------------------------------------------------------------------
 
 def wait_and_click(driver, by, value, timeout=10):
     """Ожидание элемента и клик."""
@@ -41,7 +50,9 @@ def handle_quiz_popup(driver):
     except:
         print("Плашка не найдена. Продолжаем выполнение теста.")
 
-#=============================================#
+# -------------------------------------------------------------------------------
+# --- Test ---
+# -------------------------------------------------------------------------------
 
 def test_complete_lesson_5(driver):
     sleep(7)
@@ -111,6 +122,7 @@ def test_complete_lesson_5(driver):
     wait_and_click(driver, AppiumBy.ANDROID_UIAUTOMATOR,'new UiSelector().text("The price of the asset begins to rise")')
     wait_and_click(driver, AppiumBy.ANDROID_UIAUTOMATOR,'new UiSelector().text("All options are correct")')
     wait_and_click(driver, AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().text("Diverging triangles")')
+
     # ----------------------------------------------------------------------------------------------------------
 
     # NEXT
@@ -125,5 +137,7 @@ def test_complete_lesson_5(driver):
     # LESSON COMPLETE
     wait_and_click(driver, AppiumBy.ANDROID_UIAUTOMATOR,'new UiSelector().resourceId("com.tradingcourses.learnhowtoinvest:id/bt_start")')
 
-    
+# -------------------------------------------------------------------------------
+# --- Asserts ---
+# -------------------------------------------------------------------------------
 

@@ -1,15 +1,17 @@
+# -------------------------------------------------------------------------------
+# --- Imports ---
+# -------------------------------------------------------------------------------
+
 import pytest
 from appium import webdriver
-from selenium.webdriver.common.by import By
-from appium.webdriver.common.appiumby import AppiumBy
-from time import sleep, time
-
+from time import sleep
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-
 from locators import Languages, Login, Navigation, TradingPage, HistoryTrade, MainPage
 
-#=============================================#
+# -------------------------------------------------------------------------------
+# --- Fixture ---
+# -------------------------------------------------------------------------------
 
 from config import capabilities_options, appium_server_url  # Импортируем настройки
 
@@ -21,6 +23,10 @@ def driver():
         android_driver.terminate_app("com.tradingcourses.learnhowtoinvest")
         android_driver.activate_app("com.tradingcourses.learnhowtoinvest")
         android_driver.quit()
+
+# -------------------------------------------------------------------------------
+# --- Utils ---
+# -------------------------------------------------------------------------------
 
 def wait_and_click(driver, by, value, timeout=10):
     """Ожидание элемента и клик."""
@@ -34,7 +40,9 @@ def rotate_screen(driver, orientation):
 def wait_for_element(driver, by, value, timeout=10):
     return WebDriverWait(driver, timeout).until(EC.presence_of_element_located((by, value)))
 
-#=============================================#
+# -------------------------------------------------------------------------------
+# --- Test ---
+# -------------------------------------------------------------------------------
 
 def test_open_trading_history(driver):
     sleep(7)
@@ -65,7 +73,9 @@ def test_open_trading_history(driver):
     # Возвращаемся на экран с графиком.
     wait_and_click(driver, *HistoryTrade.BTN_BACK)
 
-# ==================== asserts ====================
+# -------------------------------------------------------------------------------
+# --- Asserts ---
+# -------------------------------------------------------------------------------
 
     demo_balance = wait_for_element(driver, *MainPage.DEMO_BALANCE)
     assert demo_balance is not None, 'Demo Balance is not visible'

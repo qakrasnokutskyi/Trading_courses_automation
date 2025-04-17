@@ -1,13 +1,17 @@
+# -------------------------------------------------------------------------------
+# --- Imports ---
+# -------------------------------------------------------------------------------
+
 import pytest
 from appium import webdriver
 from time import sleep
-
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-
 from locators import Languages,Login,Navigation,Indicators,IndicatorColors,TradingPage,CurrencyPairs, MainPage
 
-#=============================================#
+# -------------------------------------------------------------------------------
+# --- Fixture ---
+# -------------------------------------------------------------------------------
 
 from config import capabilities_options, appium_server_url  # Импортируем настройки
 
@@ -19,6 +23,10 @@ def driver():
         android_driver.terminate_app("com.tradingcourses.learnhowtoinvest")
         android_driver.activate_app("com.tradingcourses.learnhowtoinvest")
         android_driver.quit()
+
+# -------------------------------------------------------------------------------
+# --- Utils ---
+# -------------------------------------------------------------------------------
 
 def wait_and_click(driver, by, value, timeout=10):
     """Ожидание элемента и клик."""
@@ -32,7 +40,9 @@ def rotate_screen(driver, orientation):
 def wait_for_element(driver, by, value, timeout=10):
     return WebDriverWait(driver, timeout).until(EC.presence_of_element_located((by, value)))
 
-#=============================================#
+# -------------------------------------------------------------------------------
+# --- Test ---
+# -------------------------------------------------------------------------------
 
 def test_delete_indicator(driver):
     sleep(7)
@@ -79,7 +89,9 @@ def test_delete_indicator(driver):
     wait_and_click(driver, *Indicators.PAGE_ACTIVE_INDICATORS)
     wait_and_click(driver, *Indicators.DELETE_INDICATOR)
 
-# ==================== asserts ====================
+# -------------------------------------------------------------------------------
+# --- Asserts ---
+# -------------------------------------------------------------------------------
 
     demo_balance = wait_for_element(driver, *MainPage.DEMO_BALANCE)
     assert demo_balance is not None, 'Demo Balance is not visible'

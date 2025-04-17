@@ -1,17 +1,19 @@
-from datetime import datetime
+# -------------------------------------------------------------------------------
+# --- Imports ---
+# -------------------------------------------------------------------------------
 
+from datetime import datetime
 import pytest
 from appium import webdriver
 from selenium.webdriver.common.by import By
-
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-
 from time import sleep
-
 from locators import Languages, Login, Navigation, BrokerPage
 
-#=============================================#
+# -------------------------------------------------------------------------------
+# --- Fixture ---
+# -------------------------------------------------------------------------------
 
 from config import capabilities_options, appium_server_url  # Импортируем настройки
 
@@ -23,6 +25,10 @@ def driver():
         android_driver.terminate_app("com.tradingcourses.learnhowtoinvest")
         android_driver.activate_app("com.tradingcourses.learnhowtoinvest")
         android_driver.quit()
+
+# -------------------------------------------------------------------------------
+# --- Utils ---
+# -------------------------------------------------------------------------------
 
 def wait_and_click(driver, by, value, timeout=10):
     """Ожидание элемента и клик."""
@@ -36,7 +42,9 @@ def rotate_screen(driver, orientation):
 def wait_for_element(driver, by, value, timeout=10):
     return WebDriverWait(driver, timeout).until(EC.presence_of_element_located((by, value)))
 
-#=============================================#
+# -------------------------------------------------------------------------------
+# --- Test ---
+# -------------------------------------------------------------------------------
 
 def test_check_date_format(driver):
     sleep(7)
@@ -74,19 +82,17 @@ def test_check_date_format(driver):
 
         # Сравниваем отображаемое время с текущим
         assert app_date_text == current_month_year, f"Ожидаемый месяц и год: {current_month_year}, но отображается: {app_date_text}"
-
         print("Месяц и год совпадают с реальным временем. Тест пройден.")
 
     except AssertionError as e:
-
         print(f"Ошибка: {e}")
 
     except Exception as e:
-
         print(f"Ошибка при проверке месяца и года: {e}")
 
-
-# ==================== asserts ====================
+# -------------------------------------------------------------------------------
+# --- Asserts ---
+# -------------------------------------------------------------------------------
 
     title_brokers_page = wait_for_element(driver, *BrokerPage.TITLE_BROKERS)
     assert title_brokers_page is not None,'Title is not visible'

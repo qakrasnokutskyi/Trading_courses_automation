@@ -1,12 +1,17 @@
+# -------------------------------------------------------------------------------
+# --- Imports ---
+# -------------------------------------------------------------------------------
+
 import pytest
 from appium import webdriver
 from appium.webdriver.common.appiumby import AppiumBy
-from selenium.webdriver.common.by import By
 from time import sleep
-
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-#=============================================#
+
+# -------------------------------------------------------------------------------
+# --- Fixture ---
+# -------------------------------------------------------------------------------
 
 from config import capabilities_options, appium_server_url  # Импортируем настройки
 
@@ -15,6 +20,10 @@ def driver():
     android_driver = webdriver.Remote(appium_server_url, options=capabilities_options)
     yield android_driver
     android_driver.quit()
+
+# -------------------------------------------------------------------------------
+# --- Utils ---
+# -------------------------------------------------------------------------------
 
 def wait_and_click(driver, by, value, timeout=10):
     """Ожидание элемента и клик."""
@@ -32,7 +41,9 @@ def rotate_screen(driver, orientation):
     # orientation: 'LANDSCAPE' or 'PORTRAIT'
     driver.orientation = orientation
 
-#=============================================#
+# -------------------------------------------------------------------------------
+# --- Test ---
+# -------------------------------------------------------------------------------
 
 def test_swipe_screens(driver):
     sleep(7)
@@ -44,3 +55,6 @@ def test_swipe_screens(driver):
     for _ in range(3):
         swipe_left(driver)
 
+# -------------------------------------------------------------------------------
+# --- Asserts ---
+# -------------------------------------------------------------------------------

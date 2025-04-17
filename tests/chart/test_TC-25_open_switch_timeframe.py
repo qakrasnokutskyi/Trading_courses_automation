@@ -1,14 +1,17 @@
+# -------------------------------------------------------------------------------
+# --- Imports ---
+# -------------------------------------------------------------------------------
+
 import pytest
 from appium import webdriver
-from appium.webdriver.common.appiumby import AppiumBy
 from time import sleep
-
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-
 from locators import Languages, Login, TradingPage, Navigation, MainPage, TimeFrame
 
-#=============================================#
+# -------------------------------------------------------------------------------
+# --- Fixture ---
+# -------------------------------------------------------------------------------
 
 from config import capabilities_options, appium_server_url  # Импортируем настройки
 
@@ -21,11 +24,14 @@ def driver():
         android_driver.activate_app("com.tradingcourses.learnhowtoinvest")
         android_driver.quit()
 
+# -------------------------------------------------------------------------------
+# --- Utils ---
+# -------------------------------------------------------------------------------
+
 def wait_and_click(driver, by, value, timeout=10):
     """Ожидание элемента и клик."""
     element = WebDriverWait(driver, timeout).until(EC.element_to_be_clickable((by, value)))
     element.click()
-
 
 def rotate_screen(driver, orientation):
     # orientation: 'LANDSCAPE' or 'PORTRAIT'
@@ -34,7 +40,9 @@ def rotate_screen(driver, orientation):
 def wait_for_element(driver, by, value, timeout=10):
     return WebDriverWait(driver, timeout).until(EC.presence_of_element_located((by, value)))
 
-#=============================================#
+# -------------------------------------------------------------------------------
+# --- Test ---
+# -------------------------------------------------------------------------------
 
 def test_open_switch_timeframe(driver):
     sleep(7)
@@ -77,7 +85,9 @@ def test_open_switch_timeframe(driver):
     # Выбираем таймфрейм "m1"
     wait_and_click(driver, *TimeFrame.TIMEFRAME_M2, timeout=3)
 
-# ==================== asserts ====================
+# -------------------------------------------------------------------------------
+# --- Asserts ---
+# -------------------------------------------------------------------------------
 
     demo_balance = wait_for_element(driver, *MainPage.DEMO_BALANCE)
     assert demo_balance is not None, 'Demo Balance is not visible'

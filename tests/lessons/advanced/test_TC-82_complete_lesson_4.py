@@ -1,13 +1,18 @@
+# -------------------------------------------------------------------------------
+# --- Imports ---
+# -------------------------------------------------------------------------------
+
 import pytest
 from appium import webdriver
 from selenium.webdriver.common.by import By
 from appium.webdriver.common.appiumby import AppiumBy
-from time import sleep, time
-
+from time import sleep
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-#=============================================#
+# -------------------------------------------------------------------------------
+# --- Fixture ---
+# -------------------------------------------------------------------------------
 
 from config import capabilities_options, appium_server_url  # Импортируем настройки
 
@@ -41,7 +46,9 @@ def handle_quiz_popup(driver):
     except:
         print("Плашка не найдена. Продолжаем выполнение теста.")
 
-#=============================================#
+# -------------------------------------------------------------------------------
+# --- Test ---
+# -------------------------------------------------------------------------------
 
 def test_complete_lesson_4(driver):
     sleep(7)
@@ -112,9 +119,12 @@ def test_complete_lesson_4(driver):
     wait_and_click(driver, AppiumBy.ANDROID_UIAUTOMATOR,'new UiSelector().text("Make sure the price is below the 60-day SMA on the 4-hour chart")')
     wait_and_click(driver, AppiumBy.ANDROID_UIAUTOMATOR,'new UiSelector().text("To confirm trends")')
     wait_and_click(driver, AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().text("Trending market")')
+
     # ----------------------------------------------------------------------------------------------------------
 
     # CONTINUE
     wait_and_click(driver, AppiumBy.ANDROID_UIAUTOMATOR,'new UiSelector().resourceId("com.tradingcourses.learnhowtoinvest:id/bt_start")')
 
-    
+# -------------------------------------------------------------------------------
+# --- Asserts ---
+# -------------------------------------------------------------------------------

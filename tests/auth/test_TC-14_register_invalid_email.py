@@ -1,28 +1,20 @@
+# -------------------------------------------------------------------------------
+# --- Imports ---
+# -------------------------------------------------------------------------------
+
 import pytest
 import random
 import string
 from time import sleep
 from faker import Faker
 from appium import webdriver
-
 from locators import Languages, Login
-
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-#=============================================#
-
-# Создаем экземпляр Faker для генерации данных
-fake = Faker()
-
-def generate_random_password(length=10):
-    # Генерация случайного пароля с латинскими буквами и цифрами
-    letters_and_digits = string.ascii_letters + string.digits
-    return ''.join(random.choice(letters_and_digits) for i in range(length))
-
-#=============================================#
-
-#=============================================#
+# -------------------------------------------------------------------------------
+# --- Fixture ---
+# -------------------------------------------------------------------------------
 
 from config import capabilities_options, appium_server_url  # Импортируем настройки
 
@@ -33,6 +25,18 @@ def driver():
     if android_driver:
         android_driver.quit()
 
+# -------------------------------------------------------------------------------
+# --- Utils ---
+# -------------------------------------------------------------------------------
+
+# Создаем экземпляр Faker для генерации данных
+fake = Faker()
+
+def generate_random_password(length=10):
+    # Генерация случайного пароля с латинскими буквами и цифрами
+    letters_and_digits = string.ascii_letters + string.digits
+    return ''.join(random.choice(letters_and_digits) for i in range(length))
+
 def wait_and_click(driver, by, value, timeout=10):
     """Ожидание элемента и клик."""
     element = WebDriverWait(driver, timeout).until(EC.element_to_be_clickable((by, value)))
@@ -41,7 +45,9 @@ def wait_and_click(driver, by, value, timeout=10):
 def wait_for_element(driver, by, value, timeout=10):
     return WebDriverWait(driver, timeout).until(EC.presence_of_element_located((by, value)))
 
-#=============================================#
+# -------------------------------------------------------------------------------
+# --- Test ---
+# -------------------------------------------------------------------------------
 
 def test_register_invalid_email(driver):
     sleep(7)
@@ -74,8 +80,9 @@ def test_register_invalid_email(driver):
     # Заходим в новый аккаунт
     wait_and_click(driver, *Login.BTN_SIGNIN)
 
-# ==================== asserts ====================
-
+# -------------------------------------------------------------------------------
+# --- Asserts ---
+# -------------------------------------------------------------------------------
     registration_page_login = wait_for_element(driver, *Login.PAGE_LOGIN)
     assert registration_page_login is not None, 'Раздел "Логин" не отобразился'
 

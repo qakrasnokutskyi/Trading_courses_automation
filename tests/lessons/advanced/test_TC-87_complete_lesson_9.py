@@ -1,3 +1,7 @@
+# -------------------------------------------------------------------------------
+# --- Imports ---
+# -------------------------------------------------------------------------------
+
 import pytest
 from appium import webdriver
 from selenium.webdriver.common.by import By
@@ -7,7 +11,9 @@ from time import sleep, time
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-#=============================================#
+# -------------------------------------------------------------------------------
+# --- Fixture ---
+# -------------------------------------------------------------------------------
 
 from config import capabilities_options, appium_server_url  # Импортируем настройки
 
@@ -19,6 +25,10 @@ def driver():
         android_driver.terminate_app("com.tradingcourses.learnhowtoinvest")
         android_driver.activate_app("com.tradingcourses.learnhowtoinvest")
         android_driver.quit()
+
+# -------------------------------------------------------------------------------
+# --- Utils ---
+# -------------------------------------------------------------------------------
 
 def wait_and_click(driver, by, value, timeout=10):
     """Ожидание элемента и клик."""
@@ -41,7 +51,9 @@ def handle_quiz_popup(driver):
     except:
         print("Плашка не найдена. Продолжаем выполнение теста.")
 
-#=============================================#
+# -------------------------------------------------------------------------------
+# --- Test ---
+# -------------------------------------------------------------------------------
 
 def test_complete_lesson_9(driver):
     handle_quiz_popup(driver)
@@ -114,6 +126,7 @@ def test_complete_lesson_9(driver):
     wait_and_click(driver, AppiumBy.ANDROID_UIAUTOMATOR,'new UiSelector().text("PUT option")')
     wait_and_click(driver, AppiumBy.ANDROID_UIAUTOMATOR,'new UiSelector().text("Short-term price reversals")')
     wait_and_click(driver, AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().text("Formation of two bearish candles after testing the resistance level")')
+
     # ----------------------------------------------------------------------------------------------------------
 
     # CLOSE QUIZ
@@ -154,7 +167,9 @@ def test_complete_lesson_9(driver):
 
     handle_quiz_popup(driver)
 
-
+# -------------------------------------------------------------------------------
+# --- Asserts ---
+# -------------------------------------------------------------------------------
 
 
 
