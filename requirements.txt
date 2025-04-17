@@ -1,3 +1,5 @@
+# requirements.txt
+
 Appium-Python-Client==5.0.0
 pytest==8.3.5
 selenium==4.30.0

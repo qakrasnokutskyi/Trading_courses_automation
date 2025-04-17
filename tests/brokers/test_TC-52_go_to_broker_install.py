@@ -1,12 +1,12 @@
 import pytest
 from appium import webdriver
-from selenium.webdriver.common.by import By
-from appium.webdriver.common.appiumby import AppiumBy
+
 from time import sleep, time
 
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
+from locators import Languages, Login, Navigation, BrokerPage
 #=============================================#
 
 from config import capabilities_options, appium_server_url  # Импортируем настройки
@@ -29,37 +29,54 @@ def rotate_screen(driver, orientation):
     # orientation: 'LANDSCAPE' or 'PORTRAIT'
     driver.orientation = orientation
 
+def wait_for_element(driver, by, value, timeout=10):
+    return WebDriverWait(driver, timeout).until(EC.presence_of_element_located((by, value)))
+
 #=============================================#
 
 def test_go_to_broker_install(driver):
     sleep(7)
 
     # Выбираем англ язык
-    wait_and_click(driver, AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().text("English")')
+    wait_and_click(driver, *Languages.ENGLISH)
 
     # Нажимает кнопку "Войти/Зарегистрироваться
-    wait_and_click(driver, AppiumBy.ANDROID_UIAUTOMATOR,'new UiSelector().resourceId("com.tradingcourses.learnhowtoinvest:id/tv_enter")')
+    wait_and_click(driver, *Login.BTN_REGISTRATION_LOGIN)
 
     # Заполняем поле email
-    email = driver.find_element(AppiumBy.ANDROID_UIAUTOMATOR,'new UiSelector().text("Your email")')
+    email = wait_for_element(driver, *Login.FIELD_EMAIL)
     email.send_keys('qakrasnokutskiy@gmail.com')
-    sleep(1)
 
     # Заполняем поле password
-    password = driver.find_element(AppiumBy.ANDROID_UIAUTOMATOR,'new UiSelector().text("Your password")')
+    password = wait_for_element(driver, *Login.FIELD_PASSWORD)
     password.send_keys('e251dq12r')
-    sleep(1)
 
     # Выполняем вход
-    wait_and_click(driver, AppiumBy.ANDROID_UIAUTOMATOR,'new UiSelector().resourceId("com.tradingcourses.learnhowtoinvest:id/bt_signIn")')
+    wait_and_click(driver, *Login.BTN_SIGNIN)
 
     # Переходим в раздел Брокеры
-    wait_and_click(driver, AppiumBy.ANDROID_UIAUTOMATOR,'new UiSelector().resourceId("com.tradingcourses.learnhowtoinvest:id/brokers")')
+    wait_and_click(driver, *Navigation.BROKERS)
 
     # Открываем Брокера
-    wait_and_click(driver, AppiumBy.ANDROID_UIAUTOMATOR,'new UiSelector().resourceId("com.tradingcourses.learnhowtoinvest:id/bt_go_over").instance(0)')
+    wait_and_click(driver, *BrokerPage.BTN_NEXT_POCKET_OPTION)
 
     # Возвращаемся в приложение
     driver.back()
     sleep(2)
 
+# ==================== asserts ====================
+
+    title_brokers_page = wait_for_element(driver, *BrokerPage.TITLE_BROKERS)
+    assert title_brokers_page is not None,'Title is not visible'
+
+    min_deposit_page = wait_for_element(driver, *BrokerPage.MIN_DEPOSIT)
+    assert min_deposit_page is not None,'Min Deposit is not visible'
+
+    rating_page = wait_for_element(driver, *BrokerPage.RATING)
+    assert rating_page is not None,'Rating is not visible'
+
+    btn_next_broker = wait_for_element(driver, *BrokerPage.BTN_NEXT_BROKER)
+    assert btn_next_broker is not None,'Next Broker is not visible'
+
+    date_brokers_page = wait_for_element(driver, *BrokerPage.DATE_BROKERS)
+    assert date_brokers_page is not None,'Date Brokers is not visible'

@@ -4,8 +4,9 @@ import string
 from time import sleep, time
 from faker import Faker
 from appium import webdriver
-from selenium.webdriver.common.by import By
-from appium.webdriver.common.appiumby import AppiumBy
+
+
+from locators import Languages, Login, Course, Navigation, SettingsPage
 
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -39,19 +40,22 @@ def wait_and_click(driver, by, value, timeout=10):
     element = WebDriverWait(driver, timeout).until(EC.element_to_be_clickable((by, value)))
     element.click()
 
+def wait_for_element(driver, by, value, timeout=10):
+    return WebDriverWait(driver, timeout).until(EC.presence_of_element_located((by, value)))
+
 #=============================================#
 
 def test_register_state_persistence(driver):
     sleep(7)
 
     # English Language
-    wait_and_click(driver, AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().text("English")')
+    wait_and_click(driver, *Languages.ENGLISH)
 
     # Нажимает кнопку "Войти/Зарегистрироваться
-    wait_and_click(driver, AppiumBy.ANDROID_UIAUTOMATOR,'new UiSelector().resourceId("com.tradingcourses.learnhowtoinvest:id/tv_enter")')
+    wait_and_click(driver, *Login.BTN_REGISTRATION_LOGIN)
 
     # Переходим в раздел "Регистрация"
-    wait_and_click(driver, AppiumBy.ANDROID_UIAUTOMATOR,'new UiSelector().resourceId("com.tradingcourses.learnhowtoinvest:id/tv_tab_reg")')
+    wait_and_click(driver, *Login.PAGE_REGISTRATION)
 
     # Генерируем случайные значения для полей
     random_name = fake.first_name()
@@ -59,33 +63,50 @@ def test_register_state_persistence(driver):
     random_password = generate_random_password()
 
     # Заполняем поле Имя
-    name = driver.find_element(By.XPATH, '//android.widget.EditText[@text="Your name"]')
+    name = wait_for_element(driver, *Login.FIELD_NAME)
     name.send_keys(random_name)
-    sleep(1)
 
     # Заполняем поле Email
-    email = driver.find_element(By.XPATH, '//android.widget.EditText[@text="Your email"]')
+    email = wait_for_element(driver, *Login.FIELD_EMAIL)
     email.send_keys(random_email)
-    sleep(1)
 
     # Заполняем поле Password
-    password = driver.find_element(By.XPATH, '//android.widget.EditText[@text="Your password"]')
+    password = wait_for_element(driver, *Login.FIELD_PASSWORD)
     password.send_keys(random_password)
-    sleep(1)
 
     # Заходим в новый аккаунт
-    wait_and_click(driver, AppiumBy.ANDROID_UIAUTOMATOR,'new UiSelector().resourceId("com.tradingcourses.learnhowtoinvest:id/bt_signIn")')
+    wait_and_click(driver, *Login.BTN_SIGNIN)
 
     # Выбираем курс
-    wait_and_click(driver, AppiumBy.ANDROID_UIAUTOMATOR,'new UiSelector().resourceId("com.tradingcourses.learnhowtoinvest:id/tv_course_old_price")')
+    wait_and_click(driver, *Course.BEGINNER_COURSE)
 
     # Переходим в настройки
-    wait_and_click(driver, AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().text("Settings")')
+    wait_and_click(driver, *Navigation.SETTINGS)
 
     # Переходим между разделами
-    wait_and_click(driver, AppiumBy.ANDROID_UIAUTOMATOR,'new UiSelector().text("Brokers")') # BROKER
-    wait_and_click(driver, AppiumBy.ANDROID_UIAUTOMATOR,'new UiSelector().text("Trading")') # Trading Demo-graphic
-    wait_and_click(driver, AppiumBy.ANDROID_UIAUTOMATOR,'new UiSelector().resourceId("com.tradingcourses.learnhowtoinvest:id/studying")') # Training lesson
+    wait_and_click(driver, *Navigation.BROKERS) # BROKER
+    wait_and_click(driver, *Navigation.TRADING) # Trading Demo-graphic
+    wait_and_click(driver, *Navigation.TRAINING) # Training lesson
 
     #Возвращаемся на экран настройки
-    wait_and_click(driver, AppiumBy.ANDROID_UIAUTOMATOR,'new UiSelector().text("Settings")')
+    wait_and_click(driver, *Navigation.SETTINGS)
+
+# ==================== asserts ====================
+
+    settings_page = wait_for_element(driver, *SettingsPage.SETTINGS_TITLE)
+    assert settings_page is not None,'Поле не отображается'
+
+    email_user = wait_for_element(driver, *SettingsPage.USER_EMAIL)
+    assert email_user is not None,'Поле не отобразилось'
+
+    change_language = wait_for_element(driver, *SettingsPage.CHANGE_LANGUAGE)
+    assert change_language is not None, 'Поле не отобразилось'
+
+    send_feedback = wait_for_element(driver, *SettingsPage.SEND_FEEDBACK)
+    assert send_feedback is not None, 'Поле не отобразилось'
+
+    rate_us = wait_for_element(driver, *SettingsPage.RATE_US)
+    assert rate_us is not None,'Поле не отобразилось'
+
+    quit_user = wait_for_element(driver, *SettingsPage.QUIT)
+    assert quit_user is not None, 'Поле не отобразилось'

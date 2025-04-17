@@ -1,11 +1,12 @@
 import pytest
 from appium import webdriver
 from appium.webdriver.common.appiumby import AppiumBy
-from selenium.webdriver.common.by import By
 from time import sleep
 
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+
+from locators import Languages, Navigation, Login, TradingPage, MainPage
 
 #=============================================#
 
@@ -28,35 +29,56 @@ def rotate_screen(driver, orientation):
     # orientation: 'LANDSCAPE' or 'PORTRAIT'
     driver.orientation = orientation
 
+def wait_for_element(driver, by, value, timeout=10):
+    return WebDriverWait(driver, timeout).until(EC.presence_of_element_located((by, value)))
+
 #=============================================#
 
 def test_switch_chart_type(driver):
     sleep(7)
 
     # Выбираем англ язык
-    wait_and_click(driver, AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().text("English")')
+    wait_for_element(driver, *Languages.ENGLISH).click()
 
     # Нажимает кнопку "Войти/Зарегистрироваться
-    wait_and_click(driver, AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().resourceId("com.tradingcourses.learnhowtoinvest:id/tv_enter")')
+    wait_and_click(driver, *Login.BTN_REGISTRATION_LOGIN)
 
     # Заполняем поле email
-    email = driver.find_element(AppiumBy.ANDROID_UIAUTOMATOR,'new UiSelector().text("Your email")')
+    email = wait_for_element(driver, *Login.FIELD_EMAIL)
     email.send_keys('qakrasnokutskiy@gmail.com')
-    sleep(1)
 
     # Заполняем поле password
-    password = driver.find_element(AppiumBy.ANDROID_UIAUTOMATOR,'new UiSelector().text("Your password")')
+    password = wait_for_element(driver, *Login.FIELD_PASSWORD)
     password.send_keys('e251dq12r')
-    sleep(1)
 
     # Выполняем вход
-    wait_and_click(driver, AppiumBy.ANDROID_UIAUTOMATOR,'new UiSelector().resourceId("com.tradingcourses.learnhowtoinvest:id/bt_signIn")')
+    wait_and_click(driver, *Login.BTN_SIGNIN)
 
     # Переходим на экран c графиком
-    wait_and_click(driver, AppiumBy.ANDROID_UIAUTOMATOR,'new UiSelector().resourceId("com.tradingcourses.learnhowtoinvest:id/trading")')
+    wait_and_click(driver, *Navigation.TRADING)
 
     # Меняем график на линейный
-    wait_and_click(driver, AppiumBy.ANDROID_UIAUTOMATOR,'new UiSelector().resourceId("com.tradingcourses.learnhowtoinvest:id/iv_switch")', timeout=3)
+    wait_and_click(driver, *TradingPage.SWITCH_GRAPHIC, timeout=3)
 
     # Возвращаем на свечной
-    wait_and_click(driver, AppiumBy.ANDROID_UIAUTOMATOR,'new UiSelector().resourceId("com.tradingcourses.learnhowtoinvest:id/iv_switch")', timeout=3)
+    wait_and_click(driver, *TradingPage.SWITCH_GRAPHIC, timeout=3)
+
+# ==================== asserts ====================
+
+    demo_balance = wait_for_element(driver, *MainPage.DEMO_BALANCE)
+    assert demo_balance is not None, 'Demo Balance is not visible'
+
+    currency_pairs = wait_for_element(driver, *TradingPage.CURRENCY_PAIR)
+    assert currency_pairs is not None, 'CurrencyPairs is not visible'
+
+    indicators = wait_for_element(driver, *TradingPage.INDICATORS)
+    assert indicators is not None, 'Indicators is not visible'
+
+    timeframe = wait_for_element(driver, *TradingPage.TIMEFRAME)
+    assert timeframe is not None, 'Timeframe is not visible'
+
+    btn_sell = wait_for_element(driver, *TradingPage.BUY)
+    assert btn_sell is not None, 'Buy button is not visible'
+
+    btn_buy = wait_for_element(driver, *TradingPage.SELL)
+    assert btn_buy is not None, 'Sell button is not visible'
