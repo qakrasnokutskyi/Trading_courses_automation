@@ -6,6 +6,7 @@ import pytest
 import random
 import string
 from appium import webdriver
+from locators import Languages, Login, Navigation, BrokerPage, OnboardingPage
 from appium.webdriver.common.appiumby import AppiumBy
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -48,10 +49,10 @@ def test_send_feedback(driver):
     sleep(7)
 
     # Выбираем англ язык
-    wait_and_click(driver, AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().text("English")')
+    wait_and_click(driver, *Languages.ENGLISH)
 
     # Нажимает кнопку "Войти/Зарегистрироваться
-    wait_and_click(driver, AppiumBy.ANDROID_UIAUTOMATOR,'new UiSelector().resourceId("com.tradingcourses.learnhowtoinvest:id/tv_enter")')
+    wait_and_click(driver, *Login.BTN_REGISTRATION_LOGIN)
 
     # Заполняем поле email
     email = driver.find_element(AppiumBy.ANDROID_UIAUTOMATOR,'new UiSelector().text("Your email")')

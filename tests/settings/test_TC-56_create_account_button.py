@@ -17,6 +17,8 @@ from time import sleep
 # -------------------------------------------------------------------------------
 
 from config import capabilities_options, appium_server_url  # Импортируем настройки
+from locators import Languages, OnboardingPage, Course, Navigation, SettingsPage, Login
+
 
 @pytest.fixture(scope="function")
 def driver():
@@ -51,6 +53,9 @@ def swipe_left(driver):
     start_y = size['height'] / 2
     driver.swipe(start_x, start_y, end_x, start_y, 1000)
 
+def wait_for_element(driver, by, value, timeout=10):
+    return WebDriverWait(driver, timeout).until(EC.presence_of_element_located((by, value)))
+
 # -------------------------------------------------------------------------------
 # --- Test ---
 # -------------------------------------------------------------------------------
@@ -59,23 +64,23 @@ def test_create_account_button(driver):
     sleep(7)
 
     # Выбираем англ язык
-    wait_and_click(driver, AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().text("English")')
+    wait_and_click(driver, *Languages.ENGLISH)
 
     # Выполняем свайпы
     for _ in range(3):
         swipe_left(driver)
 
     # BEGIN TRAINING
-    wait_and_click(driver, AppiumBy.ANDROID_UIAUTOMATOR,'new UiSelector().resourceId("com.tradingcourses.learnhowtoinvest:id/bt_start")')
+    wait_and_click(driver, *OnboardingPage.BTN_START)
 
     # BEGINNER COURSE
-    wait_and_click(driver, AppiumBy.ANDROID_UIAUTOMATOR,'new UiSelector().resourceId("com.tradingcourses.learnhowtoinvest:id/ll_beginner")')
+    wait_and_click(driver, *Course.BEGINNER_COURSE)
 
     # SETTINGS
-    wait_and_click(driver, AppiumBy.ANDROID_UIAUTOMATOR,'new UiSelector().resourceId("com.tradingcourses.learnhowtoinvest:id/settings")')
+    wait_and_click(driver, *Navigation.SETTINGS)
 
     # Нажимаем кнопку "Создать аккаунт"
-    wait_and_click(driver, AppiumBy.ANDROID_UIAUTOMATOR,'new UiSelector().resourceId("com.tradingcourses.learnhowtoinvest:id/bt_create_acc")')
+    wait_and_click(driver, *SettingsPage.BTN_CREATE_ACC)
 
     # Генерируем случайные значения для полей
     random_name = fake.first_name()
@@ -83,22 +88,19 @@ def test_create_account_button(driver):
     random_password = generate_random_password()
 
     # Заполняем поле Имя
-    name = driver.find_element(AppiumBy.ANDROID_UIAUTOMATOR,'new UiSelector().text("Your name")')
+    name = wait_for_element(driver, *Login.FIELD_NAME)
     name.send_keys(random_name)
-    sleep(1)
 
     # Заполняем поле Email
-    email = driver.find_element(AppiumBy.ANDROID_UIAUTOMATOR,'new UiSelector().text("Your email")')
+    email = wait_for_element(driver, *Login.FIELD_EMAIL)
     email.send_keys(random_email)
-    sleep(1)
 
     # Заполняем поле Password
-    password = driver.find_element(AppiumBy.ANDROID_UIAUTOMATOR,'new UiSelector().text("Your password")')
+    password = wait_for_element(driver, *Login.FIELD_PASSWORD)
     password.send_keys(random_password)
-    sleep(1)
 
     # Заходим в новый аккаунт
-    wait_and_click(driver, AppiumBy.ANDROID_UIAUTOMATOR,'new UiSelector().resourceId("com.tradingcourses.learnhowtoinvest:id/bt_signIn")')
+    wait_and_click(driver, *Login.BTN_SIGNIN)
 
 # -------------------------------------------------------------------------------
 # --- Asserts ---

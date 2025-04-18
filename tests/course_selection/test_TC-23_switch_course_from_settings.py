@@ -5,19 +5,19 @@
 import pytest
 import random
 import string
+from config import capabilities_options, appium_server_url  # Импортируем настройки
 from appium import webdriver
-from appium.webdriver.common.appiumby import AppiumBy
-from selenium.webdriver.common.by import By
 from time import sleep
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from faker import Faker
 
+from locators import Languages, OnboardingPage, Course, Navigation, SettingsPage, Login, TrainingPage, MainPage
+
+
 # -------------------------------------------------------------------------------
 # --- Fixture ---
 # -------------------------------------------------------------------------------
-
-from config import capabilities_options, appium_server_url  # Импортируем настройки
 
 @pytest.fixture(scope="function")
 def driver():
@@ -53,6 +53,9 @@ def rotate_screen(driver, orientation):
     # orientation: 'LANDSCAPE' or 'PORTRAIT'
     driver.orientation = orientation
 
+def wait_for_element(driver, by, value, timeout=10):
+    return WebDriverWait(driver, timeout).until(EC.presence_of_element_located((by, value)))
+
 # -------------------------------------------------------------------------------
 # --- Test ---
 # -------------------------------------------------------------------------------
@@ -61,30 +64,21 @@ def test_switch_course_from_settings(driver):
     sleep(7)
 
     # English Language
-    wait_and_click(driver, AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().text("English")')
+    wait_and_click(driver, *Languages.ENGLISH)
 
     # Выполняем свайпы
     for _ in range(3):
         swipe_left(driver)
 
     #Нажимаем кнопку "BEGIN TRAINING"
-    start_button = driver.find_element(By.XPATH,'/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.view.ViewGroup/android.widget.FrameLayout/android.view.ViewGroup/android.widget.Button')
-    start_button.click()
-    sleep(5)
+    wait_and_click(driver, *OnboardingPage.BTN_START)
 
     #Выбираем "Про+ курс"
-    advancedPRO = driver.find_element(By.XPATH, '/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.view.ViewGroup/android.widget.FrameLayout/android.view.ViewGroup/android.widget.ScrollView/android.view.ViewGroup/android.view.ViewGroup[3]')
-    advancedPRO.click()
-    sleep(5)
+    wait_and_click(driver, *Course.PRO_COURSE)
 
     #Переходим в создать аккаунт
-    settings = driver.find_element(By.XPATH,'//android.widget.FrameLayout[@content-desc="Settings"]/android.widget.FrameLayout/android.widget.ImageView')
-    settings.click()
-    sleep(3)
-
-    tap_create_account = driver.find_element(By.XPATH,'/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.view.ViewGroup/android.widget.FrameLayout[1]/android.widget.ScrollView/android.view.ViewGroup/android.widget.Button')
-    tap_create_account.click()
-    sleep(3)
+    wait_and_click(driver, *Navigation.SETTINGS)
+    wait_and_click(driver, *SettingsPage.BTN_CREATE_ACC)
 
     # Генерируем случайные значения для полей
     random_name = fake.first_name()
@@ -92,68 +86,57 @@ def test_switch_course_from_settings(driver):
     random_password = generate_random_password()
 
     # Заполняем поле Имя
-    name = driver.find_element(By.XPATH, '//android.widget.EditText[@text="Your name"]')
+    name = wait_for_element(driver, *Login.FIELD_NAME)
     name.send_keys(random_name)
-    sleep(1)
 
     # Заполняем поле Email
-    email = driver.find_element(By.XPATH, '//android.widget.EditText[@text="Your email"]')
+    email = wait_for_element(driver, *Login.FIELD_EMAIL)
     email.send_keys(random_email)
-    sleep(1)
 
     # Заполняем поле Password
-    password = driver.find_element(By.XPATH, '//android.widget.EditText[@text="Your password"]')
+    password = wait_for_element(driver, *Login.FIELD_PASSWORD)
     password.send_keys(random_password)
-    sleep(1)
 
     # Заходим в новый аккаунт
-    signup = driver.find_element(By.XPATH,'//android.widget.Button[@resource-id="com.tradingcourses.learnhowtoinvest:id/bt_signIn"]')
-    signup.click()
-    sleep(5)
+    wait_and_click(driver, *Login.BTN_SIGNIN)
 
     #Выбираем начальный курс
-    begginer = driver.find_element(By.XPATH, '/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.view.ViewGroup/android.widget.FrameLayout/android.view.ViewGroup/android.widget.ScrollView/android.view.ViewGroup/android.view.ViewGroup[1]')
-    begginer.click()
-    sleep(2)
+    wait_and_click(driver, *Course.BEGINNER_COURSE)
 
     # Переходим в раздел "Обучение" для смены курса
-    training = driver.find_element(By.XPATH, '//android.widget.FrameLayout[@content-desc="Training"]/android.widget.FrameLayout/android.widget.ImageView')
-    training.click()
-    sleep(2)
+    wait_and_click(driver, *Navigation.TRAINING)
 
     # Выбираем новый курс
-    change_course = driver.find_element(By.XPATH, '/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.view.ViewGroup/android.widget.FrameLayout[1]/android.view.ViewGroup/android.view.ViewGroup/android.widget.Button')
-    change_course.click()
-    sleep(2)
+    wait_and_click(driver, *TrainingPage.CHANGE_COURSE)
+    wait_and_click(driver, *Course.BEGINNER_COURSE)
 
-    beginner = driver.find_element(By.XPATH, '/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.view.ViewGroup/android.widget.FrameLayout/android.view.ViewGroup/android.widget.ScrollView/android.view.ViewGroup/android.view.ViewGroup[1]')
-    beginner.click()
-    sleep(2)
+    wait_and_click(driver, *TrainingPage.CHANGE_COURSE)
+    wait_and_click(driver, *Course.MIDDLE_COURSE)
 
-    change_course = driver.find_element(By.XPATH,'/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.view.ViewGroup/android.widget.FrameLayout[1]/android.view.ViewGroup/android.view.ViewGroup/android.widget.Button')
-    change_course.click()
-    sleep(2)
+    wait_and_click(driver, *TrainingPage.CHANGE_COURSE)
+    wait_and_click(driver, *Course.ADVANCED_COURSE)
 
-    intermediate = driver.find_element(By.XPATH, '/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.view.ViewGroup/android.widget.FrameLayout/android.view.ViewGroup/android.widget.ScrollView/android.view.ViewGroup/android.view.ViewGroup[2]')
-    intermediate.click()
-    sleep(2)
-
-    change_course = driver.find_element(By.XPATH, '/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.view.ViewGroup/android.widget.FrameLayout[1]/android.view.ViewGroup/android.view.ViewGroup/android.widget.Button')
-    change_course.click()
-    sleep(2)
-
-    advanced = driver.find_element(By.XPATH, '/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.view.ViewGroup/android.widget.FrameLayout/android.view.ViewGroup/android.widget.ScrollView/android.view.ViewGroup/android.view.ViewGroup[3]')
-    advanced.click()
-    sleep(2)
-
-    change_course = driver.find_element(By.XPATH,'/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.view.ViewGroup/android.widget.FrameLayout[1]/android.view.ViewGroup/android.view.ViewGroup/android.widget.Button')
-    change_course.click()
-    sleep(2)
-
-    advancedPRO = driver.find_element(By.XPATH, '/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.view.ViewGroup/android.widget.FrameLayout/android.view.ViewGroup/android.widget.ScrollView/android.view.ViewGroup/android.view.ViewGroup[4]')
-    advancedPRO.click()
-    sleep(5)
+    wait_and_click(driver, *TrainingPage.CHANGE_COURSE)
+    wait_and_click(driver, *Course.PRO_COURSE)
 
 # -------------------------------------------------------------------------------
 # --- Asserts ---
 # -------------------------------------------------------------------------------
+
+    demo_balance = wait_for_element(driver, *MainPage.DEMO_BALANCE)
+    assert demo_balance is not None, 'Demo balance is not found'
+
+    change_course_btn = wait_for_element(driver, *TrainingPage.CHANGE_COURSE)
+    assert change_course_btn is not None, 'Change course button is not found'
+
+    navigation_training = wait_for_element(driver, *Navigation.TRAINING)
+    assert navigation_training is not None, 'Navigation training is not found'
+
+    navigation_trading = wait_for_element(driver, *Navigation.TRADING)
+    assert navigation_trading is not None, 'Navigation trading is not found'
+
+    navigation_broker = wait_for_element(driver, *Navigation.BROKERS)
+    assert navigation_broker is not None, 'Navigation broker is not found'
+
+    navigation_settings = wait_for_element(driver, *Navigation.SETTINGS)
+    assert navigation_settings is not None, 'Navigation settings is not found'

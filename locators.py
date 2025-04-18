@@ -33,6 +33,36 @@ class Navigation:
     BROKERS = (AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().text("Brokers")')
     SETTINGS = (AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().text("Settings")')
 
+    # -------------------------------------------------------------------------------
+    # --- Settings language ---
+    # -------------------------------------------------------------------------------
+
+    SETTINGS_RU = (AppiumBy.ANDROID_UIAUTOMATOR,'new UiSelector().text("Настройки")')
+    SETTINGS_UA = (AppiumBy.ANDROID_UIAUTOMATOR,'new UiSelector().text("Налаштування")')
+    SETTINGS_DE = (AppiumBy.ANDROID_UIAUTOMATOR,'new UiSelector().text("Einstellungen")')
+    SETTINGS_ID = (AppiumBy.ANDROID_UIAUTOMATOR,'new UiSelector().text("Pengaturan")')
+    SETTINGS_UR = (AppiumBy.ANDROID_UIAUTOMATOR,'new UiSelector().text("ترتیبات")')
+    SETTINGS_HI = (AppiumBy.ANDROID_UIAUTOMATOR,'new UiSelector().text("सैटिंग्स")')
+
+    # -------------------------------------------------------------------------------
+    # --- Training language ---
+    # -------------------------------------------------------------------------------
+
+    TRAINING_HI = (AppiumBy.ANDROID_UIAUTOMATOR,'new UiSelector().resourceId("com.tradingcourses.learnhowtoinvest:id/navigation_bar_item_large_label_view")')
+
+    # -------------------------------------------------------------------------------
+    # --- Trading language ---
+    # -------------------------------------------------------------------------------
+
+    TRADING_HI = (AppiumBy.ANDROID_UIAUTOMATOR,'new UiSelector().text("ट्रेडिंग")')
+
+    # -------------------------------------------------------------------------------
+    # --- Brokers language ---
+    # -------------------------------------------------------------------------------
+
+    BROKERS_HI = (AppiumBy.ANDROID_UIAUTOMATOR,'new UiSelector().text("ब्रोकर")')
+
+
 class MainPage:
     DEMO_BALANCE = (AppiumBy.ANDROID_UIAUTOMATOR,'new UiSelector().resourceId("com.tradingcourses.learnhowtoinvest:id/tv_balance_label")')
     CHANGE_COURSE = (AppiumBy.ANDROID_UIAUTOMATOR,'new UiSelector().resourceId("com.tradingcourses.learnhowtoinvest:id/bt_change_course")')
@@ -112,11 +142,25 @@ class Course:
     PRO_COURSE = (AppiumBy.ANDROID_UIAUTOMATOR,'new UiSelector().resourceId("com.tradingcourses.learnhowtoinvest:id/ll_pro")')
     ADVANCED_COURSE = (AppiumBy.ANDROID_UIAUTOMATOR,'new UiSelector().resourceId("com.tradingcourses.learnhowtoinvest:id/ll_pro_plus")')
 
+    CHOOSE_COURSE_TITLE = (AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().resourceId("com.tradingcourses.learnhowtoinvest:id/tv_info_title")')
+
 class SettingsPage:
     SETTINGS_TITLE = (AppiumBy.ANDROID_UIAUTOMATOR,'new UiSelector().resourceId("com.tradingcourses.learnhowtoinvest:id/tv_next_title")')
+    BTN_SIGN_IN = (AppiumBy.ANDROID_UIAUTOMATOR,'new UiSelector().resourceId("com.tradingcourses.learnhowtoinvest:id/tv_sign_in")')
     USER_EMAIL = (AppiumBy.ANDROID_UIAUTOMATOR,'new UiSelector().resourceId("com.tradingcourses.learnhowtoinvest:id/tv_email_label")')
     CHANGE_LANGUAGE = (AppiumBy.ANDROID_UIAUTOMATOR,'new UiSelector().resourceId("com.tradingcourses.learnhowtoinvest:id/tv_lang_label")')
     SEND_FEEDBACK = (AppiumBy.ANDROID_UIAUTOMATOR,'new UiSelector().text("Send Feedback")')
     RATE_US = (AppiumBy.ANDROID_UIAUTOMATOR,'new UiSelector().text("Please rate us")')
     QUIT = (AppiumBy.ANDROID_UIAUTOMATOR,'new UiSelector().text("Quit")')
 
+    BTN_CREATE_ACC = (AppiumBy.ANDROID_UIAUTOMATOR,'new UiSelector().resourceId("com.tradingcourses.learnhowtoinvest:id/bt_create_acc")')
+
+class OnboardingPage:
+    BTN_START = (AppiumBy.ANDROID_UIAUTOMATOR,'new UiSelector().resourceId("com.tradingcourses.learnhowtoinvest:id/bt_start")')
+
+    TITLE_ONBOARDING_PAGE3 = (AppiumBy.ANDROID_UIAUTOMATOR,'new UiSelector().resourceId("com.tradingcourses.learnhowtoinvest:id/tv_title")')
+    SUBTITLE_ONBOARDING_PAGE2 = (AppiumBy.ANDROID_UIAUTOMATOR,'new UiSelector().resourceId("com.tradingcourses.learnhowtoinvest:id/tv_subtitle")')
+
+
+class TrainingPage:
+    CHANGE_COURSE = (AppiumBy.ANDROID_UIAUTOMATOR,'new UiSelector().resourceId("com.tradingcourses.learnhowtoinvest:id/bt_change_course")')

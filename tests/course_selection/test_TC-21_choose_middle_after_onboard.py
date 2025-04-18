@@ -4,7 +4,8 @@
 
 import pytest
 from appium import webdriver
-from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 from time import sleep
 
 # -------------------------------------------------------------------------------
@@ -12,6 +13,8 @@ from time import sleep
 # -------------------------------------------------------------------------------
 
 from config import capabilities_options, appium_server_url  # Импортируем настройки
+from locators import OnboardingPage, Course, Languages, Navigation, TrainingPage, MainPage
+
 
 @pytest.fixture(scope="function")
 def driver():
@@ -28,6 +31,21 @@ def rotate_screen(driver, orientation):
     # orientation: 'LANDSCAPE' or 'PORTRAIT'
     driver.orientation = orientation
 
+def swipe_left(driver):
+    size = driver.get_window_size()
+    start_x = size['width'] * 0.8
+    end_x = size['width'] * 0.2
+    start_y = size['height'] / 2
+    driver.swipe(start_x, start_y, end_x, start_y, 1000)
+
+def wait_for_element(driver, by, value, timeout=10):
+    return WebDriverWait(driver, timeout).until(EC.presence_of_element_located((by, value)))
+
+def wait_and_click(driver, by, value, timeout=10):
+    """Ожидание элемента и клик."""
+    element = WebDriverWait(driver, timeout).until(EC.element_to_be_clickable((by, value)))
+    element.click()
+
 # -------------------------------------------------------------------------------
 # --- Test ---
 # -------------------------------------------------------------------------------
@@ -36,100 +54,36 @@ def test_choose_middle_after_onboard(driver):
     sleep(7)
 
     # Выбираем англ язык
-    english = driver.find_element(By.XPATH, '//android.widget.TextView[@resource-id="com.tradingcourses.learnhowtoinvest:id/tv_name" and @text="English"]')
-    english.click()
-    sleep(1)
+    wait_and_click(driver, *Languages.ENGLISH)
 
-    # Выполнение свайпа влево между разделами онбоард страницы
-    # Получаем координаты элементов для свайпа
-    element = driver.find_element(By.XPATH,'/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.view.ViewGroup/android.widget.FrameLayout/android.view.ViewGroup/androidx.viewpager.widget.ViewPager/androidx.recyclerview.widget.RecyclerView/android.widget.FrameLayout')
-    size = driver.get_window_size()
-
-    # Начальные и конечные координаты для свайпа влево
-    start_x = size['width'] * 0.8  # Начальная точка (80% от ширины экрана)
-    end_x = size['width'] * 0.2  # Конечная точка (20% от ширины экрана)
-    start_y = size['height'] / 2  # Центр экрана по высоте
-
-    # Свайп с использованием метода swipe() (если используется более старая версия Appium)
-    driver.swipe(start_x, start_y, end_x, start_y, 1000)  # Время свайпа - 1000 миллисекунд
-    sleep(1)
-
-    # Получаем координаты элементов для свайпа
-    element = driver.find_element(By.XPATH,'/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.view.ViewGroup/android.widget.FrameLayout/android.view.ViewGroup/androidx.viewpager.widget.ViewPager/androidx.recyclerview.widget.RecyclerView/android.widget.FrameLayout')
-    size = driver.get_window_size()
-
-    # Начальные и конечные координаты для свайпа влево
-    start_x = size['width'] * 0.8  # Начальная точка (80% от ширины экрана)
-    end_x = size['width'] * 0.2  # Конечная точка (20% от ширины экрана)
-    start_y = size['height'] / 2  # Центр экрана по высоте
-
-    # Свайп с использованием метода swipe() (если используется более старая версия Appium)
-    driver.swipe(start_x, start_y, end_x, start_y, 1000)  # Время свайпа - 1000 миллисекунд
-    sleep(1)
-
-    # Получаем координаты элементов для свайпа
-    element = driver.find_element(By.XPATH, '/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.view.ViewGroup/android.widget.FrameLayout/android.view.ViewGroup/androidx.viewpager.widget.ViewPager/androidx.recyclerview.widget.RecyclerView/android.widget.FrameLayout')
-    size = driver.get_window_size()
-
-    # Начальные и конечные координаты для свайпа влево
-    start_x = size['width'] * 0.8  # Начальная точка (80% от ширины экрана)
-    end_x = size['width'] * 0.2  # Конечная точка (20% от ширины экрана)
-    start_y = size['height'] / 2  # Центр экрана по высоте
-
-    # Свайп с использованием метода swipe() (если используется более старая версия Appium)
-    driver.swipe(start_x, start_y, end_x, start_y, 1000)  # Время свайпа - 1000 миллисекунд
-    sleep(1)
-
-    # Получаем координаты элементов для свайпа
-    element = driver.find_element(By.XPATH,'/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.view.ViewGroup/android.widget.FrameLayout/android.view.ViewGroup/androidx.viewpager.widget.ViewPager/androidx.recyclerview.widget.RecyclerView/android.widget.FrameLayout')
-    size = driver.get_window_size()
-
-    # Начальные и конечные координаты для свайпа влево
-    start_x = size['width'] * 0.2  # Начальная точка (80% от ширины экрана)
-    end_x = size['width'] * 0.8  # Конечная точка (20% от ширины экрана)
-    start_y = size['height'] / 2  # Центр экрана по высоте
-
-    # Свайп с использованием метода swipe() (если используется более старая версия Appium)
-    driver.swipe(start_x, start_y, end_x, start_y, 1000)  # Время свайпа - 1000 миллисекунд
-    sleep(1)
-
-# Получаем координаты элементов для свайпа
-    element = driver.find_element(By.XPATH,'/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.view.ViewGroup/android.widget.FrameLayout/android.view.ViewGroup/androidx.viewpager.widget.ViewPager/androidx.recyclerview.widget.RecyclerView/android.widget.FrameLayout')
-    size = driver.get_window_size()
-
-    # Начальные и конечные координаты для свайпа влево
-    start_x = size['width'] * 0.2  # Начальная точка (80% от ширины экрана)
-    end_x = size['width'] * 0.8  # Конечная точка (20% от ширины экрана)
-    start_y = size['height'] / 2  # Центр экрана по высоте
-
-    # Свайп с использованием метода swipe() (если используется более старая версия Appium)
-    driver.swipe(start_x, start_y, end_x, start_y, 1000)  # Время свайпа - 1000 миллисекунд
-    sleep(1)
-
-    # Получаем координаты элементов для свайпа
-    element = driver.find_element(By.XPATH,
-                                  '/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.view.ViewGroup/android.widget.FrameLayout/android.view.ViewGroup/androidx.viewpager.widget.ViewPager/androidx.recyclerview.widget.RecyclerView/android.widget.FrameLayout')
-    size = driver.get_window_size()
-
-    # Начальные и конечные координаты для свайпа влево
-    start_x = size['width'] * 0.2  # Начальная точка (80% от ширины экрана)
-    end_x = size['width'] * 0.8  # Конечная точка (20% от ширины экрана)
-    start_y = size['height'] / 2  # Центр экрана по высоте
-
-    # Свайп с использованием метода swipe() (если используется более старая версия Appium)
-    driver.swipe(start_x, start_y, end_x, start_y, 1000)  # Время свайпа - 1000 миллисекунд
-    sleep(1)
+    # Выполняем свайпы
+    for _ in range(3):
+        swipe_left(driver)
 
     #Нажимаем кнопку "BEGIN TRAINING"
-    start_button = driver.find_element(By.XPATH,'/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.view.ViewGroup/android.widget.FrameLayout/android.view.ViewGroup/android.widget.Button')
-    start_button.click()
-    sleep(5)
+    wait_and_click(driver, *OnboardingPage.BTN_START)
 
     #Выбираем "Средний курс"
-    intermediate = driver.find_element(By.XPATH, '/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.view.ViewGroup/android.widget.FrameLayout/android.view.ViewGroup/android.widget.ScrollView/android.view.ViewGroup/android.view.ViewGroup[2]')
-    intermediate.click()
-    sleep(5)
+    wait_and_click(driver, *Course.MIDDLE_COURSE)
 
 # -------------------------------------------------------------------------------
 # --- Asserts ---
 # -------------------------------------------------------------------------------
+
+    demo_balance = wait_for_element(driver, *MainPage.DEMO_BALANCE)
+    assert demo_balance is not None, 'Demo balance is not found'
+
+    change_course_btn = wait_for_element(driver, *TrainingPage.CHANGE_COURSE)
+    assert change_course_btn is not None, 'Change course button is not found'
+
+    navigation_training = wait_for_element(driver, *Navigation.TRAINING)
+    assert navigation_training is not None, 'Navigation training is not found'
+
+    navigation_trading = wait_for_element(driver, *Navigation.TRADING)
+    assert navigation_trading is not None, 'Navigation trading is not found'
+
+    navigation_broker = wait_for_element(driver, *Navigation.BROKERS)
+    assert navigation_broker is not None, 'Navigation broker is not found'
+
+    navigation_settings = wait_for_element(driver, *Navigation.SETTINGS)
+    assert navigation_settings is not None, 'Navigation settings is not found'

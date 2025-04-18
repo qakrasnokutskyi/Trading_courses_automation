@@ -5,8 +5,8 @@
 import pytest
 import random
 import string
+from locators import Languages, OnboardingPage, Course, Navigation, SettingsPage, Login
 from appium import webdriver
-from appium.webdriver.common.appiumby import AppiumBy
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from faker import Faker
@@ -51,6 +51,9 @@ def swipe_left(driver):
     start_y = size['height'] / 2
     driver.swipe(start_x, start_y, end_x, start_y, 1000)
 
+def wait_for_element(driver, by, value, timeout=10):
+    return WebDriverWait(driver, timeout).until(EC.presence_of_element_located((by, value)))
+
 # -------------------------------------------------------------------------------
 # --- Test ---
 # -------------------------------------------------------------------------------
@@ -59,36 +62,34 @@ def test_login_existing_account(driver):
     sleep(7)
 
     # Выбираем англ язык
-    wait_and_click(driver, AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().text("English")')
+    wait_and_click(driver, *Languages.ENGLISH)
 
     # Выполняем свайпы
     for _ in range(3):
         swipe_left(driver)
 
     # BEGIN TRAINING
-    wait_and_click(driver, AppiumBy.ANDROID_UIAUTOMATOR,'new UiSelector().resourceId("com.tradingcourses.learnhowtoinvest:id/bt_start")')
+    wait_and_click(driver, *OnboardingPage.BTN_START)
 
     # BEGINNER COURSE
-    wait_and_click(driver, AppiumBy.ANDROID_UIAUTOMATOR,'new UiSelector().resourceId("com.tradingcourses.learnhowtoinvest:id/ll_beginner")')
+    wait_and_click(driver, *Course.BEGINNER_COURSE)
 
     # SETTINGS
-    wait_and_click(driver, AppiumBy.ANDROID_UIAUTOMATOR,'new UiSelector().resourceId("com.tradingcourses.learnhowtoinvest:id/settings")')
+    wait_and_click(driver, *Navigation.SETTINGS)
 
     # Входим в аккаунт через кнопку "Войти"
-    wait_and_click(driver, AppiumBy.ANDROID_UIAUTOMATOR,'new UiSelector().resourceId("com.tradingcourses.learnhowtoinvest:id/tv_sign_in")')
+    wait_and_click(driver, *SettingsPage.BTN_SIGN_IN)
 
-    # Заполняем поле email
-    email = driver.find_element(AppiumBy.ANDROID_UIAUTOMATOR,'new UiSelector().text("Your email")')
-    email.send_keys('qakrasnokutskiy@gmail.com')
-    sleep(1)
+    # Ввод email
+    email_field = wait_for_element(driver, *Login.FIELD_EMAIL)
+    email_field.send_keys('qakrasnokutskiy@gmail.com')
 
-    # Заполняем поле password
-    password = driver.find_element(AppiumBy.ANDROID_UIAUTOMATOR,'new UiSelector().text("Your password")')
-    password.send_keys('e251dq12r')
-    sleep(1)
+    # Ввод пароля
+    password_field = wait_for_element(driver, *Login.FIELD_PASSWORD)
+    password_field.send_keys('e251dq12r')
 
     # Выполняем вход
-    wait_and_click(driver, AppiumBy.ANDROID_UIAUTOMATOR,'new UiSelector().resourceId("com.tradingcourses.learnhowtoinvest:id/bt_signIn")')
+    wait_and_click(driver, *Login.BTN_SIGNIN)
 
 # -------------------------------------------------------------------------------
 # --- Asserts ---

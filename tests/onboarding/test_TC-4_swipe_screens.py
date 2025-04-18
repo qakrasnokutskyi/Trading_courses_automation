@@ -4,7 +4,7 @@
 
 import pytest
 from appium import webdriver
-from appium.webdriver.common.appiumby import AppiumBy
+from locators import Languages, OnboardingPage, Login
 from time import sleep
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -41,6 +41,9 @@ def rotate_screen(driver, orientation):
     # orientation: 'LANDSCAPE' or 'PORTRAIT'
     driver.orientation = orientation
 
+def wait_for_element(driver, by, value, timeout=10):
+    return WebDriverWait(driver, timeout).until(EC.presence_of_element_located((by, value)))
+
 # -------------------------------------------------------------------------------
 # --- Test ---
 # -------------------------------------------------------------------------------
@@ -49,7 +52,7 @@ def test_swipe_screens(driver):
     sleep(7)
 
     # English Language
-    wait_and_click(driver, AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().text("English")')
+    wait_and_click(driver, *Languages.ENGLISH)
 
     # Выполняем свайпы
     for _ in range(3):
@@ -58,3 +61,13 @@ def test_swipe_screens(driver):
 # -------------------------------------------------------------------------------
 # --- Asserts ---
 # -------------------------------------------------------------------------------
+
+    title_onboarding = wait_for_element(driver, *OnboardingPage.TITLE_ONBOARDING_PAGE3)
+    assert title_onboarding is not None, 'Title onboarding page 3 is not found'
+
+    btn_begin_training = wait_for_element(driver, *OnboardingPage.BTN_START)
+    assert btn_begin_training is not None, 'Button "Begin training" is not found'
+
+    btn_login_registration = wait_for_element(driver, *Login.BTN_REGISTRATION_LOGIN)
+    assert btn_login_registration is not None, 'Button "Login / Registration" is not found'
+
